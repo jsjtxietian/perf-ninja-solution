@@ -20,3 +20,8 @@ cmake --build "build" --config Release --parallel 4
 cmake -E chdir "build" cmake -G "Visual Studio 17 2022" -DCMAKE_BUILD_TYPE=Debug ../
 @rem Build the library.
 cmake --build "build" --config Debug --parallel 4
+
+@rem Generate build system files with cmake.
+cmake -E chdir "build" cmake -G "Visual Studio 17 2022" -DCMAKE_BUILD_TYPE=RelWithDebInfo ../
+@rem Build the library.
+cmake --build "build" --config RelWithDebInfo --parallel 4
