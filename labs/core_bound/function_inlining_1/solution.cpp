@@ -23,5 +23,13 @@ static int compare(const void *lhs, const void *rhs) {
 }
 
 void solution(std::array<S, N> &arr) {
+#if SOLUTION
+  std::sort(arr.begin(),arr.end(),[](S& a, S& b)
+  {
+    return a.key1 < b.key1 || (a.key1 == b.key1) && (a.key2 < b.key2); 
+  });
+#else
   qsort(arr.data(), arr.size(), sizeof(S), compare);
+#endif
+
 }
