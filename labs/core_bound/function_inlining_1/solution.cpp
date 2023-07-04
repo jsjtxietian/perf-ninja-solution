@@ -3,7 +3,11 @@
 #include <algorithm>
 #include <stdlib.h>
 
+#if SOLUTION
+static inline int compare(const void *lhs, const void *rhs) {
+#else
 static int compare(const void *lhs, const void *rhs) {
+#endif
   auto &a = *reinterpret_cast<const S *>(lhs);
   auto &b = *reinterpret_cast<const S *>(rhs);
 
