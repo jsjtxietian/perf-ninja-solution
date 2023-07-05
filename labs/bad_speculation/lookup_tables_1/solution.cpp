@@ -10,11 +10,26 @@ static std::size_t mapToBucket(std::size_t v) {    // diff
   else if (v >= 83 && v < 100) return 6; // 17
   return -1;  // let it crash
 }
+#ifdef SOLUTION
+const static int buckets[100] = {
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // thirteen 0s
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, // sixteen 1s
+    2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, // twelve 2s
+    3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, // twelve 3s
+    4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, // eighteen 4s
+    5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, // twelve 5s
+    6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6 // seventeen 6s
+};
+#endif
 
 std::array<std::size_t, NUM_BUCKETS> histogram(const std::vector<int> &values) {
   std::array<std::size_t, NUM_BUCKETS> retBuckets{0};
   for (auto v : values) {
+#ifdef SOLUTION
+    retBuckets[buckets[v]]++;
+#else
     retBuckets[mapToBucket(v)]++;
+#endif
   }
   return retBuckets;
 }
