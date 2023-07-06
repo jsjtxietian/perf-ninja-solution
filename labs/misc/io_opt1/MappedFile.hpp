@@ -113,7 +113,7 @@ MappedFile::MappedFile(const std::string &path) {
     throw std::runtime_error{"Could not open file"};
 
   LARGE_INTEGER size{};
-  if (not GetFileSizeEx(m_file_handle, &size)) {
+  if (!GetFileSizeEx(m_file_handle, &size)) {
     CloseHandle(m_file_handle);
     throw std::runtime_error{"Could not obtain file size"};
   }
@@ -156,7 +156,7 @@ MappedFile &MappedFile::operator=(MappedFile &&other) noexcept {
 }
 
 void MappedFile::dtorImpl() noexcept {
-  if (not m_content)
+  if (m_content == nullptr)
     return;
   UnmapViewOfFile(m_content);
   CloseHandle(m_mapping_handle);
