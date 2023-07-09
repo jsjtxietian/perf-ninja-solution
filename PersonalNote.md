@@ -8,7 +8,8 @@ quick start
 cmake -E make_directory build
 cd build
 cmake -DCMAKE_BUILD_TYPE=Release ..
-cmake --build . --config Release --parallel 8
+// cmake -DCMAKE_BUILD_TYPE=Release -G Ninja -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_C_COMPILER=clang ..
+cmake --build . --config Release --parallel 8 
 cmake --build . --target validateLab
 cmake --build . --target benchmarkLab
 ```
