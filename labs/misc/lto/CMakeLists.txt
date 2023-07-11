@@ -4,6 +4,8 @@ project(lab)
 
 set(VALIDATE_ARGS "${CMAKE_CURRENT_SOURCE_DIR}/golden.ppm")
 
+# seems only this is ok
+# set(CMAKE_C_FLAGS "-flto ${CMAKE_C_FLAGS}")
 set(CMAKE_CXX_FLAGS "-flto ${CMAKE_CXX_FLAGS}")
 set(CMAKE_EXE_LINKER_FLAGS "-flto ${CMAKE_EXE_LINKER_FLAGS} ")
 
