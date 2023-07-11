@@ -10,6 +10,9 @@ std::size_t solution(const std::vector<uint32_t> &data, int thread_count) {
   // to `target` stays inside the loop.
   struct Accumulator {
     std::atomic<uint32_t> value = 0;
+#ifdef SOLUTION
+    uint32_t padding[15];
+#endif
   };
   std::vector<Accumulator> accumulators(thread_count);
 
