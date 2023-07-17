@@ -25,7 +25,15 @@ void identity(Matrix &result) {
 // Multiply two square matrices
 void multiply(Matrix &result, const Matrix &a, const Matrix &b) {
   zero(result);
-
+#ifdef SOLUTION
+  for (int i = 0; i < N; i++) {
+    for (int k = 0; k < N; k++) {
+      for (int j = 0; j < N; j++) {
+        result[i][j] += a[i][k] * b[k][j];
+      }
+    }
+  }
+#else
   for (int i = 0; i < N; i++) {
     for (int j = 0; j < N; j++) {
       for (int k = 0; k < N; k++) {
@@ -33,6 +41,7 @@ void multiply(Matrix &result, const Matrix &a, const Matrix &b) {
       }
     }
   }
+#endif
 }
 
 // Compute integer power of a given square matrix
