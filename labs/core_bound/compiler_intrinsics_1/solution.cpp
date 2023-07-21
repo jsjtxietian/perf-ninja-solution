@@ -27,7 +27,7 @@ void imageSmoothing(const InputVector &input, uint8_t radius,
 #ifdef SOLUTION
   // 2. main loop.
   limit = size - radius;
-  // SSE4.1 solution
+  // SSE4.1 solution => simd prefix sum
   const uint8_t* subtractPtr = input.data() + pos - radius - 1;
   const uint8_t* addPtr = input.data() + pos + radius;
   const uint16_t* outputPtr = output.data() + pos;
