@@ -23,3 +23,10 @@ results.json
 /data/large.data
 /data/small.data
 /ref/small.out
+
+baselineBuild0/
+baselineBuild1/
+baselineBuild2/
+solutionBuild0/
+solutionBuild1/
+solutionBuild2/
