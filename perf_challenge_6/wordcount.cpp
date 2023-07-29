@@ -23,24 +23,41 @@
 
 std::vector<WordCount> wordcount(std::string filePath)
 {
+	std::cout << "Opt Solution.\n";
 	std::unordered_map<std::string, int> m;
 	m.max_load_factor(0.5);
-
 	std::vector<WordCount> mvec;
 
 	MappedFile mappedFile = MappedFile{filePath};
 	std::string_view content = mappedFile.getContents();
-	std::istringstream iss{content.data()};
+	int fileLength = content.length();
 	std::string s;
 
-	while (iss >> s)
-		m[s]++;
+	uint32_t word_start = 0;
+	for (uint32_t i = 0; i < fileLength; ++i) {
+		if (content[i] == ' ' || content[i] == '\n' || content[i] == '\t'
+			|| content[i] == '\r' || content[i] == '\v' || content[i] == '\f' ) {
+			if (i > word_start) {
+				std::string_view word_view(content.data() + word_start, i - word_start);
+				m[std::string{word_view}]++;
+			}
+			word_start = i + 1;
+		}
+	}
+	if (fileLength > word_start) {
+		std::string_view word_view(content.data() + word_start, fileLength - word_start);
+		m[std::string{word_view}]++;
+	}
 
 	mvec.reserve(m.size());
 	for (auto &p : m)
 		mvec.emplace_back(WordCount{p.second, move(p.first)});
 
 	std::sort(mvec.begin(), mvec.end(), std::greater<WordCount>());
+	// for(const auto& v: mvec)
+	// {
+	// 	std::cout << v.word << ' ' << v.count << '\n';
+	// }
 	return mvec;
 }
 

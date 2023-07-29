@@ -65,6 +65,8 @@ add_executable(validate_wordcount validate.cpp ${srcs} ${EXT_VALIDATE_srcs})
 add_executable(simple_wordcount simple_bench.cpp ${srcs} ${EXT_BENCHMARK_srcs})
 add_executable(baseline_wordcount baseline_bench.cpp ${srcs} ${EXT_BENCHMARK_srcs})
 
+target_compile_definitions(simple_wordcount PUBLIC SOLUTION=1)
+
 # Check optional arguments
 if(NOT DEFINED CI)
   set(CI OFF)

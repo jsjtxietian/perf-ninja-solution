@@ -1,3 +1,5 @@
+python check_speedup.py -challenge_path ./ -bench_lib_path ../tools/benchmark -num_runs 3
+
 [dendibakh/perf-challenge6 (github.com)](https://github.com/dendibakh/perf-challenge6)
 
 Solution：
