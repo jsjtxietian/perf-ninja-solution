@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # download the specific dumps used to generate the reference solution small-ref.bz2
-$DUMPVERSION=20220520
+$DUMPVERSION=20230520
 
 # download the latest data
 # $DUMPVERSION=latest
