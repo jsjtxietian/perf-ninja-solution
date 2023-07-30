@@ -1,7 +1,7 @@
 #include "wordcount.hpp"
 #include <iostream>
 
-#define SOLUTION
+// #define SOLUTION
 
 static std::string inputsDirPath;
 
