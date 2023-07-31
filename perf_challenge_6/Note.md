@@ -1,6 +1,12 @@
 todo: https://github.com/dendibakh/perf-challenge6/commit/62ebb0a4667da938e94995bc5531f94dd118e00d
 
-检查large的正确性；ifstream全读进来一次处理；async io；direct io
+- [x] 检查large的正确性
+
+对比mmap和
+
+- [ ] ifstream全读进来一次处理
+- [ ] async io
+- [ ] direct io
 
 ## Check Result
 
@@ -14,16 +20,16 @@ vtune can run simple_wordcount.exe
 python check_speedup.py -challenge_path ./ -bench_lib_path ../tools/benchmark -num_runs 3
 
 ## Result
-### After Mmap
+### Mmap vs Origin
 
 | Benchmark | Time | CPU | Time Old | Time New | CPU Old | CPU New |
 | ---- | ---- | ---- | ---- | ---- | ---- | ---- |
-| OVERALL_GEOMEAN | -0.8233 | -0.8156 | 143 | 25 | 73 | 13 |
+| OVERALL_GEOMEAN | -0.4173 | -0.3272 | 141 | 82 | 77 | 52 |
 
-### After pmr
+### MMap + pmr vs MMap
 | Benchmark | Time | CPU | Time Old | Time New | CPU Old | CPU New |
 | ---- | ---- | ---- | ---- | ---- | ---- | ---- |
-| OVERALL_GEOMEAN |  -0.1135 | -0.1831 | 25 | 22 | 16 | 13 |
+| OVERALL_GEOMEAN |  -0.1375 | -0.0993 | 82 | 71 | 45 | 41 |
 
 ## Solution：
 

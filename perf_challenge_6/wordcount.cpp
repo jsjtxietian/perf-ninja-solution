@@ -28,7 +28,7 @@ std::vector<WordCount> wordcount(std::string filePath)
 
 	MappedFile mappedFile = MappedFile{filePath};
 	std::string_view content = mappedFile.getContents();
-	int fileLength = content.length();
+	size_t fileLength = content.length();
 
 	void* buffer = malloc(fileLength*3);
     std::pmr::monotonic_buffer_resource pool(buffer, fileLength*3);
@@ -37,8 +37,8 @@ std::vector<WordCount> wordcount(std::string filePath)
 
 	std::vector<WordCount> mvec;
 
-	uint32_t word_start = 0;
-	for (uint32_t i = 0; i < fileLength; ++i) {
+	size_t word_start = 0;
+	for (size_t i = 0; i < fileLength; ++i) {
 		if (content[i] == ' ' || content[i] == '\n' || content[i] == '\t'
 			|| content[i] == '\r' || content[i] == '\v' || content[i] == '\f' ) {
 			if (i > word_start) {
@@ -58,10 +58,6 @@ std::vector<WordCount> wordcount(std::string filePath)
 		mvec.emplace_back(WordCount{p.second, std::string(p.first.begin(),p.first.end())});
 
 	std::sort(mvec.begin(), mvec.end(), std::greater<WordCount>());
-	// for(const auto& v: mvec)
-	// {
-	// 	std::cout << v.word << ' ' << v.count << '\n';
-	// }
 	return mvec;
 }
 
@@ -78,11 +74,11 @@ std::vector<WordCount> wordcount(std::string filePath)
 
 	MappedFile mappedFile = MappedFile{filePath};
 	std::string_view content = mappedFile.getContents();
-	int fileLength = content.length();
+	size_t fileLength = content.length();
 	std::string s;
 
-	uint32_t word_start = 0;
-	for (uint32_t i = 0; i < fileLength; ++i) {
+	size_t word_start = 0;
+	for (size_t i = 0; i < fileLength; ++i) {
 		if (content[i] == ' ' || content[i] == '\n' || content[i] == '\t'
 			|| content[i] == '\r' || content[i] == '\v' || content[i] == '\f' ) {
 			if (i > word_start) {
@@ -102,16 +98,13 @@ std::vector<WordCount> wordcount(std::string filePath)
 		mvec.emplace_back(WordCount{p.second, move(p.first)});
 
 	std::sort(mvec.begin(), mvec.end(), std::greater<WordCount>());
-	// for(const auto& v: mvec)
-	// {
-	// 	std::cout << v.word << ' ' << v.count << '\n';
-	// }
 	return mvec;
 }
 
-// // Baseline solution.
-// // Do not change it - you can use for quickly checking speedups
-// // of your solution agains the baseline, see check_speedup.py
+// Baseline solution.
+// Do not change it - you can use for quickly checking speedups
+// of your solution agains the baseline, see check_speedup.py
+
 // std::vector<WordCount> wordcount(std::string filePath)
 // {
 // 	std::unordered_map<std::string, int> m;
@@ -138,3 +131,12 @@ std::vector<WordCount> wordcount(std::string filePath)
 // 	return mvec;
 // }
 #endif
+
+// test
+// std::cout << mvec.size() << ' ' << mvec[0].count << mvec[0].word
+// 	<< mvec[100].count << mvec[100].word <<  mvec[5555].count << mvec[5555].word
+// 	<< mvec[mvec.size()-1].count << mvec[mvec.size()-1].word;
+// for(const auto& v: mvec)
+// {
+// 	std::cout << v.word << ' ' << v.count << '\n';
+// }
