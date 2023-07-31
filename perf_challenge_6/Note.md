@@ -1,6 +1,9 @@
 todo: https://github.com/dendibakh/perf-challenge6/commit/62ebb0a4667da938e94995bc5531f94dd118e00d
 
+检查large的正确性；ifstream全读进来一次处理；async io；direct io
+
 ## Check Result
+
 cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_CXX_COMPILER="clang++" -DCMAKE_C_COMPILER="clang" -G Ninja ..
 cmake --build . --config RelWithDebInfo --parallel 8
 cmake --build . --target validate
