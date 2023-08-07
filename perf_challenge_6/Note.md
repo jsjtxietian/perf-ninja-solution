@@ -1,10 +1,11 @@
 todo: https://github.com/dendibakh/perf-challenge6/commit/62ebb0a4667da938e94995bc5531f94dd118e00d
 
 - [x] 检查large的正确性
-- [ ] xxhash [Cyan4973/xxHash: Extremely fast non-cryptographic hash algorithm (github.com)](https://github.com/Cyan4973/xxHash)
+- [x] xxhash [Cyan4973/xxHash: Extremely fast non-cryptographic hash algorithm (github.com)](https://github.com/Cyan4973/xxHash) => std::unordered_map + xxhash不显著
 - [ ] [How quickly can you remove spaces from a string? – Daniel Lemire's blog](https://lemire.me/blog/2017/01/20/how-quickly-can-you-remove-spaces-from-a-string/)
-- [ ] software prefetch for hash => vector
-- [ ] lookup table
+- [x] software prefetch for hash => 不显著
+- [x] lookup table => 不显著
+- [x] huge page => 
 
 对比mmap和
 
@@ -24,6 +25,8 @@ cmake --build . --target benchmark
 vtune can run simple_wordcount.exe
 
 python check_speedup.py -challenge_path ./ -bench_lib_path ../tools/benchmark -num_runs 3
+
+42020903 17639696|280387volt.7596[[Joseph1皙殽
 
 ## Result
 ### Mmap vs Origin
