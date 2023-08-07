@@ -1,12 +1,18 @@
 todo: https://github.com/dendibakh/perf-challenge6/commit/62ebb0a4667da938e94995bc5531f94dd118e00d
 
 - [x] 检查large的正确性
+- [ ] xxhash [Cyan4973/xxHash: Extremely fast non-cryptographic hash algorithm (github.com)](https://github.com/Cyan4973/xxHash)
+- [ ] [How quickly can you remove spaces from a string? – Daniel Lemire's blog](https://lemire.me/blog/2017/01/20/how-quickly-can-you-remove-spaces-from-a-string/)
+- [ ] software prefetch for hash => vector
+- [ ] lookup table
 
 对比mmap和
 
 - [ ] ifstream全读进来一次处理
 - [ ] async io
 - [ ] direct io
+
+
 
 ## Check Result
 
