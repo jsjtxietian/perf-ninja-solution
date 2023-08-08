@@ -40,6 +40,18 @@ python check_speedup.py -challenge_path ./ -bench_lib_path ../tools/benchmark -n
 | ---- | ---- | ---- | ---- | ---- | ---- | ---- |
 | OVERALL_GEOMEAN |  -0.1375 | -0.0993 | 82 | 71 | 45 | 41 |
 
+### MMap + robin_hood hash vs MMap 
+| Benchmark | Time | CPU | Time Old | Time New | CPU Old | CPU New |
+| ---- | ---- | ---- | ---- | ---- | ---- | ---- |
+| OVERALL_GEOMEAN |  -0.2670 | -0.2809 | 89 | 65 | 52 | 37 |
+
+### MMap + robin_hood hash vs  MMap + pmr
+| Benchmark | Time | CPU | Time Old | Time New | CPU Old | CPU New |
+| ---- | ---- | ---- | ---- | ---- | ---- | ---- |
+| OVERALL_GEOMEAN |  -0.0831 |  -0.1428 | 72 | 66 | 40 | 35 |
+
+https://github.com/martinus/robin-hood-hashing
+
 ## Solution：
 
 [Performance analysis and tuning challenge #6. | Easyperf](https://easyperf.net/blog/2022/05/28/Performance-analysis-and-tuning-contest-6)
