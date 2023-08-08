@@ -5,7 +5,7 @@ todo: https://github.com/dendibakh/perf-challenge6/commit/62ebb0a4667da938e94995
 - [ ] [How quickly can you remove spaces from a string? – Daniel Lemire's blog](https://lemire.me/blog/2017/01/20/how-quickly-can-you-remove-spaces-from-a-string/)
 - [x] software prefetch for hash => 不显著
 - [x] lookup table => 不显著
-- [x] huge page => 
+- [x] huge page => 叠加pmr不显著
 
 对比mmap和
 

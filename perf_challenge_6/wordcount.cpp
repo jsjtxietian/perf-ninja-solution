@@ -19,6 +19,7 @@
 // multi-threaded version (optional).
 #ifdef SOLUTION
 
+
 #include "MappedFile.hpp"
 #include <memory_resource>
 #include <cstring>
@@ -101,6 +102,22 @@ std::vector<WordCount> wordcount(std::string filePath)
 }
 
 #endif
+
+// ====================================================================
+// huge page
+
+// #define UNICODE
+// #define _UNICODE
+
+// #include "MappedFile.hpp"
+// #include "hugePage.h"
+// setRequiredPrivileges();
+// SIZE_T largePageSize = GetLargePageMinimum();
+// std::cout << "largePageSize: " << largePageSize << std::endl;
+// size_t allocSize = largePageSize * ((fileLength * 3 / largePageSize) + 1);
+
+// void* buffer = VirtualAlloc(NULL, allocSize , MEM_RESERVE | MEM_COMMIT | MEM_LARGE_PAGES, PAGE_READWRITE);
+
 
 // ====================================================================
 // software prefetch
