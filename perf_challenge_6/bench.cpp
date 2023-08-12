@@ -1,6 +1,7 @@
 
 #include "benchmark/benchmark.h"
 #include "wordcount.hpp"
+#include "HybridDetect.h"
 #include <iostream>
 
 static std::string inputsDirPath;
@@ -22,6 +23,7 @@ BENCHMARK(bench1)->Unit(benchmark::kSecond);
 
 // Run the benchmark
 int main(int argc, char **argv) {
+  GetInfoAndSetPCore();
   constexpr int mandatoryArgumentsCount = 1;
   if (argc < 1 + mandatoryArgumentsCount) {
     std::cerr << "Usage: lab path/to/inputs [gbench args]" << std::endl;

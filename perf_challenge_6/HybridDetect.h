@@ -1415,6 +1415,8 @@ void GetInfoAndSetPCore(){
 		}
 	}
 
+	// printf("P core: %d, E Core: %d\n",cntPCore, cntECore);
+
 	auto AssignToPCore = [&](HANDLE hThread)
 	{
 		BOOL r = SetThreadSelectedCpuSets(hThread, PCores, cntPCore);
