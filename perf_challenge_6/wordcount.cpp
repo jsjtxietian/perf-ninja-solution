@@ -23,6 +23,47 @@
 std::vector<WordCount> wordcount(std::string filePath)
 {
 	std::cout << "Opt Solution.\n";
+	
+	MappedFile mappedFile = MappedFile{filePath};
+	std::string_view content = mappedFile.getContents();
+	size_t fileLength = content.length();
+
+	robin_hood::unordered_flat_map<std::string, int> m;
+	// hack, but useful
+	m.reserve(42020903);
+
+	size_t word_start = 0;
+	for (size_t i = 0; i < fileLength; ++i) {
+		if (content[i] == ' ' || content[i] == '\n' || content[i] == '\t') {
+			if (i > word_start) {
+				std::string_view word_view(content.data() + word_start, i - word_start);
+				m[std::string{word_view}]++;
+			}
+			word_start = i + 1;
+		}
+	}
+	if (fileLength > word_start) {
+		std::string_view word_view(content.data() + word_start, fileLength - word_start);
+		m[std::string{word_view}]++;
+	}
+
+	std::vector<WordCount> mvec;
+	mvec.reserve(m.size());
+	for (auto &p : m)
+		mvec.emplace_back(WordCount{p.second, move(p.first)});
+
+	std::sort(mvec.begin(), mvec.end(), std::greater<WordCount>());
+	return mvec;
+}
+
+#else
+
+#include "MappedFile.hpp"
+#include "robin_hood.h"
+
+std::vector<WordCount> wordcount(std::string filePath)
+{
+	std::cout << "Opt Solution.\n";
 	robin_hood::unordered_map<std::string, int> m;
 	std::vector<WordCount> mvec;
 
@@ -53,49 +94,7 @@ std::vector<WordCount> wordcount(std::string filePath)
 	return mvec;
 }
 
-#else
 
-#include "MappedFile.hpp"
-#include <memory_resource>
-#include <cstring>
-
-std::vector<WordCount> wordcount(std::string filePath)
-{
-	std::cout << "Opt Solution.\n";
-
-	MappedFile mappedFile = MappedFile{filePath};
-	std::string_view content = mappedFile.getContents();
-	size_t fileLength = content.length();
-
-	void* buffer = malloc(fileLength*3);
-    std::pmr::monotonic_buffer_resource pool(buffer, fileLength*3);
-	std::pmr::unordered_map<std::pmr::string, int> m(&pool);
-	m.max_load_factor(0.5);
-
-	std::vector<WordCount> mvec;
-
-	size_t word_start = 0;
-	for (size_t i = 0; i < fileLength; ++i) {
-		if (content[i] == ' ' || content[i] == '\n' || content[i] == '\t') {
-			if (i > word_start) {
-				std::string_view word_view(content.data() + word_start, i - word_start);
-				m[std::pmr::string(word_view,&pool)]++;
-			}
-			word_start = i + 1;
-		}
-	}
-	if (fileLength > word_start) {
-		std::string_view word_view(content.data() + word_start, fileLength - word_start);
-		m[std::pmr::string(word_view,&pool)]++;
-	}
-
-	mvec.reserve(m.size());
-	for (auto &p : m)
-		mvec.emplace_back(WordCount{p.second, std::string(p.first.begin(),p.first.end())});
-
-	std::sort(mvec.begin(), mvec.end(), std::greater<WordCount>());
-	return mvec;
-}
 
 #endif
 

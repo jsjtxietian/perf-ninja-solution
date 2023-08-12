@@ -50,6 +50,11 @@ python check_speedup.py -challenge_path ./ -bench_lib_path ../tools/benchmark -n
 | ---- | ---- | ---- | ---- | ---- | ---- | ---- |
 | OVERALL_GEOMEAN |  -0.0831 |  -0.1428 | 72 | 66 | 40 | 35 |
 
+### MMap + robin_hood hash + reserve vs  MMap + robin_hood hash 
+| Benchmark | Time | CPU | Time Old | Time New | CPU Old | CPU New |
+| ---- | ---- | ---- | ---- | ---- | ---- | ---- |
+| OVERALL_GEOMEAN | -0.0621 |  -0.1229 | 66 | 62 | 34 | 29 |
+
 https://github.com/martinus/robin-hood-hashing
 
 ## Solution：
