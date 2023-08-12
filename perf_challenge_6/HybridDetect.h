@@ -1390,3 +1390,41 @@ inline bool RunOnOne(PROCESSOR_INFO& procInfo, const short coreID, const ULONG64
 
 #endif
 
+
+} // namespace HybridDetect
+
+void GetInfoAndSetPCore(){
+	ULONG PCores[64] = {};
+	int cntPCore = 0;
+	ULONG ECores[64] = {};
+	int cntECore = 0;
+	HybridDetect::PROCESSOR_INFO procInfo = {};
+	HybridDetect::GetLogicalProcessors(procInfo);
+	for(size_t i = 0; i < procInfo.cores.size(); ++i)
+	{
+		auto& c = procInfo.cores[i];
+		if(c.efficiencyClass == 1)
+		{
+			PCores[cntPCore] = c.id;
+			++cntPCore;
+		}
+		else
+		{
+			ECores[cntECore] = c.id;
+			++cntECore;
+		}
+	}
+
+	auto AssignToPCore = [&](HANDLE hThread)
+	{
+		BOOL r = SetThreadSelectedCpuSets(hThread, PCores, cntPCore);
+		assert(r);
+	};
+	auto AssignToECore = [&](HANDLE hThread)
+	{
+		BOOL r = SetThreadSelectedCpuSets(hThread, ECores, cntECore);
+		assert(r);
+	};
+
+	AssignToPCore(GetCurrentThread());
+}
