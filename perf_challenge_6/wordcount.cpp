@@ -17,13 +17,131 @@
 // is a header-only library.
 #ifdef SOLUTION
 
+#define NOMINMAX
 #include "MappedFile.hpp"
 #include "robin_hood.h"
+
+#include <emmintrin.h> // for SSE2 intrinsics
+
+#if defined(_MSC_VER)
+#include <intrin.h>
+unsigned int ctz(unsigned int mask) {
+    unsigned long index;
+    _BitScanForward(&index, mask);
+    return index;
+}
+#else
+unsigned int ctz(unsigned int mask) {
+    return __builtin_ctz(mask);
+}
+#endif
+
 
 std::vector<WordCount> wordcount(std::string filePath)
 {
 	std::cout << "Opt Solution.\n";
 	
+	MappedFile mappedFile = MappedFile{filePath};
+	std::string_view content = mappedFile.getContents();
+	size_t fileLength = content.length();
+
+	robin_hood::unordered_flat_map<std::string, int> m;
+	// hack, but useful
+	m.reserve(42020903);
+
+	size_t word_start = 0;
+	size_t i = 0;
+
+#if SSE
+	__m128i space = _mm_set1_epi8(' ');
+	__m128i newline = _mm_set1_epi8('\n');
+	__m128i tab = _mm_set1_epi8('\t');
+
+	while (i + 16 <= fileLength) {
+		__m128i chunk = _mm_loadu_si128(reinterpret_cast<const __m128i*>(content.data() + i));
+
+		__m128i space_mask = _mm_cmpeq_epi8(chunk, space);
+		__m128i newline_mask = _mm_cmpeq_epi8(chunk, newline);
+		__m128i tab_mask = _mm_cmpeq_epi8(chunk, tab);
+
+		__m128i combined_mask = _mm_or_si128(space_mask, _mm_or_si128(newline_mask, tab_mask));
+
+		int mask = _mm_movemask_epi8(combined_mask);
+
+		while (mask != 0) {
+			int bit_pos = ctz(mask); // find the position of the least significant set bit
+			if (i + bit_pos > word_start) {
+				std::string_view word_view(content.data() + word_start, i + bit_pos - word_start);
+				m[std::string{word_view}]++;
+			}
+			word_start = i + bit_pos + 1;
+			mask &= mask - 1; // clear the least significant set bit
+		}
+
+		i += 16;
+	}
+#else // AVX2
+	__m256i space = _mm256_set1_epi8(' ');
+	__m256i newline = _mm256_set1_epi8('\n');
+	__m256i tab = _mm256_set1_epi8('\t');
+
+	while (i + 32 <= fileLength) {
+		__m256i chunk = _mm256_loadu_si256(reinterpret_cast<const __m256i*>(content.data() + i));
+
+		__m256i space_mask = _mm256_cmpeq_epi8(chunk, space);
+		__m256i newline_mask = _mm256_cmpeq_epi8(chunk, newline);
+		__m256i tab_mask = _mm256_cmpeq_epi8(chunk, tab);
+
+		__m256i combined_mask = _mm256_or_si256(space_mask, _mm256_or_si256(newline_mask, tab_mask));
+
+		int mask = _mm256_movemask_epi8(combined_mask);
+
+		while (mask != 0) {
+			int bit_pos = ctz(mask); // use the ctz function we defined earlier
+			if (i + bit_pos > word_start) {
+				std::string_view word_view(content.data() + word_start, i + bit_pos - word_start);
+				m[std::string{word_view}]++;
+			}
+			word_start = i + bit_pos + 1;
+			mask &= mask - 1; // clear the least significant set bit
+		}
+
+		i += 32;
+	}
+#endif
+
+	// Handle the remainder with the original non-SIMD code
+	for (; i < fileLength; ++i) {
+		if (content[i] == ' ' || content[i] == '\n' || content[i] == '\t') {
+			if (i > word_start) {
+				std::string_view word_view(content.data() + word_start, i - word_start);
+				m[std::string{word_view}]++;
+			}
+			word_start = i + 1;
+		}
+	}
+
+	if (fileLength > word_start) {
+		std::string_view word_view(content.data() + word_start, fileLength - word_start);
+		m[std::string{word_view}]++;
+	}
+
+	std::vector<WordCount> mvec;
+	mvec.reserve(m.size());
+	for (auto &p : m)
+		mvec.emplace_back(WordCount{p.second, move(p.first)});
+
+	std::sort(mvec.begin(), mvec.end(), std::greater<WordCount>());
+	return mvec;
+}
+
+#else
+
+#include "MappedFile.hpp"
+#include "robin_hood.h"
+
+std::vector<WordCount> wordcount(std::string filePath)
+{
 	MappedFile mappedFile = MappedFile{filePath};
 	std::string_view content = mappedFile.getContents();
 	size_t fileLength = content.length();
@@ -48,44 +166,6 @@ std::vector<WordCount> wordcount(std::string filePath)
 	}
 
 	std::vector<WordCount> mvec;
-	mvec.reserve(m.size());
-	for (auto &p : m)
-		mvec.emplace_back(WordCount{p.second, move(p.first)});
-
-	std::sort(mvec.begin(), mvec.end(), std::greater<WordCount>());
-	return mvec;
-}
-
-#else
-
-#include "MappedFile.hpp"
-#include "robin_hood.h"
-
-std::vector<WordCount> wordcount(std::string filePath)
-{
-	std::cout << "Opt Solution.\n";
-	robin_hood::unordered_map<std::string, int> m;
-	std::vector<WordCount> mvec;
-
-	MappedFile mappedFile = MappedFile{filePath};
-	std::string_view content = mappedFile.getContents();
-	size_t fileLength = content.length();
-
-	size_t word_start = 0;
-	for (size_t i = 0; i < fileLength; ++i) {
-		if (content[i] == ' ' || content[i] == '\n' || content[i] == '\t') {
-			if (i > word_start) {
-				std::string_view word_view(content.data() + word_start, i - word_start);
-				m[std::string{word_view}]++;
-			}
-			word_start = i + 1;
-		}
-	}
-	if (fileLength > word_start) {
-		std::string_view word_view(content.data() + word_start, fileLength - word_start);
-		m[std::string{word_view}]++;
-	}
-
 	mvec.reserve(m.size());
 	for (auto &p : m)
 		mvec.emplace_back(WordCount{p.second, move(p.first)});
