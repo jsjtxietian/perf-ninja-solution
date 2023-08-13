@@ -57,6 +57,11 @@ python check_speedup.py -challenge_path ./ -bench_lib_path ../tools/benchmark -n
 
 https://github.com/martinus/robin-hood-hashing
 
+### pdqsort
+| Benchmark | Time | CPU | Time Old | Time New | CPU Old | CPU New |
+| ---- | ---- | ---- | ---- | ---- | ---- | ---- |
+| OVERALL_GEOMEAN | -0.0731 | -0.2965 | 61 | 57 | 36 | 25 |
+
 ## Solution：
 
 [Performance analysis and tuning challenge #6. | Easyperf](https://easyperf.net/blog/2022/05/28/Performance-analysis-and-tuning-contest-6)
