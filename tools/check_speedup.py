@@ -54,12 +54,12 @@ def callWrapper(cmdLine):
 
 def buildAndRunBench(iterNumber, variant, cmakeFlags):
   os.chdir(saveCWD)
-  buildPath = os.path.join(saveCWD, variant + "Build" + str(iterNumber))
+  buildPath = os.path.join(saveCWD, "Temp", variant + "Build" + str(iterNumber))
   buildDirPath = Path(buildPath)
   if buildDirPath.exists() and buildDirPath.is_dir():
     shutil.rmtree(buildDirPath)
   try:
-    callWrapper("cmake -E make_directory " + variant +"Build" + str(iterNumber))
+    callWrapper("cmake -E make_directory " + "Temp/" + variant +"Build" + str(iterNumber))
     os.chdir(buildPath)
     labAbsPath = labRootPath
     if not os.path.isabs(labAbsPath):
@@ -71,16 +71,16 @@ def buildAndRunBench(iterNumber, variant, cmakeFlags):
     # this will save score in result.json file
     callWrapper("cmake --build . --config " + buildType + " --target validateLab")
     callWrapper("cmake --build . --config " + buildType + " --target benchmarkLab")
-  except:
-    print(bcolors.FAIL + variant + ": iteration " + str(iterNumber) + " - Failed" + bcolors.ENDC)
+  except Exception as e:
+    print(bcolors.FAIL + variant + ": iteration " + str(iterNumber) + " - Failed, Error: " + str(e) + bcolors.ENDC)
     return False
   print(bcolors.OKGREEN + variant + ": iteration " + str(iterNumber) + " - Done" + bcolors.ENDC)
   return True
 
 def compareResults(iterNumber):
-  baselineBuildPath = os.path.join(saveCWD, "baselineBuild" + str(iterNumber))
+  baselineBuildPath = os.path.join(saveCWD, "Temp", "baselineBuild" + str(iterNumber))
   baselineResultPath = os.path.join(baselineBuildPath, "result.json")
-  solutionBuildPath = os.path.join(saveCWD, "solutionBuild" + str(iterNumber))
+  solutionBuildPath = os.path.join(saveCWD, "Temp", "solutionBuild" + str(iterNumber))
   solutionResultPath = os.path.join(solutionBuildPath, "result.json")
 
   outJsonSolution = gbench.util.load_benchmark_results(solutionResultPath)
