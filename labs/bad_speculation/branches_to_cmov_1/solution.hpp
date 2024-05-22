@@ -44,17 +44,17 @@ public:
         int N = current[0].size();
         
         // Loop through every cell
-        for(int i = 0; i < M; i++) {
-            for(int j = 0; j < N; j++) {
+        for(int i = 1; i < M - 1; i++) {
+            for(int j = 1; j < N - 1; j++) {
                 int aliveNeighbours = 0;      
                 // finding the number of neighbours that are alive                  
                 for(int p = -1; p <= 1; p++) {              // row-offet (-1,0,1)
                     for(int q = -1; q <= 1; q++) {          // col-offset (-1,0,1)
-                        if((i + p < 0) ||                   // if row offset less than UPPER boundary
-                           (i + p > M - 1) ||               // if row offset more than LOWER boundary
-                           (j + q < 0) ||                   // if column offset less than LEFT boundary
-                           (j + q > N - 1))                 // if column offset more than RIGHT boundary
-                            continue;
+                        // if((i + p < 0) ||                   // if row offset less than UPPER boundary
+                        //    (i + p > M - 1) ||               // if row offset more than LOWER boundary
+                        //    (j + q < 0) ||                   // if column offset less than LEFT boundary
+                        //    (j + q > N - 1))                 // if column offset more than RIGHT boundary
+                        //     continue;
                         aliveNeighbours += current[i + p][j + q];
                     }
                 }
@@ -91,6 +91,7 @@ public:
                     default:
                         future[i][j] = 0;
                 }
+#endif
             }
         }
         std::swap(current, future);

@@ -40,8 +40,8 @@ public:
         int N = current[0].size();
         
         // Loop through every cell
-        for(int i = 0; i < M; i++) {
-            for(int j = 0; j < N; j++) {
+        for(int i = 1; i < M-1; i++) {
+            for(int j = 1; j < N-1; j++) {
                 int aliveNeighbours = 0;      
                 // finding the number of neighbours that are alive                  
                 for(int p = -1; p <= 1; p++) {              // row-offet (-1,0,1)
@@ -88,6 +88,7 @@ std::vector<int> original_solution(const std::vector<LifeOriginal::Grid>& grids)
   popCounts.reserve(grids.size());
 
   LifeOriginal life;
+
   for (auto& grid : grids) {
     life.reset(grid);
     for (int i = 0; i < NumberOfSims; i++)
