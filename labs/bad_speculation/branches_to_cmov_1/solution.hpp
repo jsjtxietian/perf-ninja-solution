@@ -63,6 +63,16 @@ public:
                 aliveNeighbours -= current[i][j];
 
                 // Implementing the Rules of Life:
+#if SOLUTION
+                int currentCell = current[i][j];
+                int newState;
+                if (__builtin_unpredictable(aliveNeighbours == 3 || (aliveNeighbours == 2 && currentCell))) {
+                    newState = 1;
+                } else {
+                    newState = 0;
+                }
+                future[i][j] = newState;
+#else
                 switch(aliveNeighbours) {
                     // 1. Cell is lonely and dies
                     case 0:
