@@ -1,7 +1,7 @@
-#include <vector>
-#include <iostream>
-#include <cstdint>
 #include <array>
+#include <cstdint>
+#include <iostream>
+#include <vector>
 
 // The number of motion simulation steps.
 constexpr uint32_t STEPS = 10000;
@@ -21,7 +21,8 @@ std::vector<Particle> initParticles();
 // https://www.javamex.com/tutorials/random_numbers/xorshift.shtml
 struct XorShift32 {
   uint32_t val;
-  XorShift32 (uint32_t seed) : val(seed) {}
+  XorShift32(uint32_t seed) : val(seed) {}
+
 public:
   uint32_t gen() {
     val ^= (val << 13);
@@ -37,13 +38,11 @@ constexpr float PI_F = 3.14159265358979f;
 // Approximate sine and cosine functions
 // https://stackoverflow.com/questions/18662261/fastest-implementation-of-sine-cosine-and-square-root-in-c-doesnt-need-to-b
 static float sine(float x) {
-    const float B = 4 / PI_F;
-    const float C = -4/( PI_F * PI_F);
-    return B * x + C * x * std::abs(x);
+  const float B = 4 / PI_F;
+  const float C = -4 / (PI_F * PI_F);
+  return B * x + C * x * std::abs(x);
 }
-static float cosine(float x) {
-    return sine(x + (PI_F / 2));
-}
+static float cosine(float x) { return sine(x + (PI_F / 2)); }
 
 // A constant to convert from degrees to radians.
 // It maps the random number from [0;UINT32_MAX) to [0;2*pi).
@@ -53,9 +52,51 @@ constexpr float DEGREE_TO_RADIAN = (2 * PI_D) / UINT32_MAX;
 // Simulate the motion of the particles.
 // For every particle, we generate a random angle and move the particle
 // in the corresponding direction.
+#if SOLUTION
+
+// todo: no opt here, need investigation; constexpr can help a lot but it's not the goal of this lab
+template <class RNG, uint32_t M>
+void randomParticleMotion(std::vector<Particle> &particles, uint32_t seed) {
+  RNG rng(seed);
+  int particle_size = particles.size();
+  int inner_loop_count = particle_size / M;
+
+  for (int i = 0; i < STEPS; i++) {
+    for (int j = 0; j < inner_loop_count; j++) {
+      uint32_t vals[M];
+      for (int k = 0; k < M; k++) {
+        vals[k] = rng.gen();
+      }
+      const int base = j * M;
+
+      for (int k = 0; k < M; k++) {
+        float angle_rad = vals[k] * DEGREE_TO_RADIAN;
+        auto &p = particles[base + k];
+        p.x += cosine(angle_rad) * p.velocity;
+        p.y += sine(angle_rad) * p.velocity;
+      }
+    }
+
+    for (int j = inner_loop_count * M; j < particle_size; j++) {
+      uint32_t angle = rng.gen();
+      auto &p = particles[j];
+      float angle_rad = angle * DEGREE_TO_RADIAN;
+      p.x += cosine(angle_rad) * p.velocity;
+      p.y += sine(angle_rad) * p.velocity;
+    }
+  }
+}
+
 template <class RNG>
 void randomParticleMotion(std::vector<Particle> &particles, uint32_t seed) {
-  RNG rng(seed);  
+  randomParticleMotion<RNG, 8>(particles, seed);
+}
+
+#else
+
+template <class RNG>
+void randomParticleMotion(std::vector<Particle> &particles, uint32_t seed) {
+  RNG rng(seed);
   for (int i = 0; i < STEPS; i++)
     for (auto &p : particles) {
       uint32_t angle = rng.gen();
@@ -64,3 +105,5 @@ void randomParticleMotion(std::vector<Particle> &particles, uint32_t seed) {
       p.y += sine(angle_rad) * p.velocity;
     }
 }
+
+#endif

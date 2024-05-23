@@ -64,8 +64,9 @@ def buildAndRunBench(iterNumber, variant, cmakeFlags):
     labAbsPath = labRootPath
     if not os.path.isabs(labAbsPath):
       labAbsPath = os.path.join(saveCWD, labRootPath)
-    # buildType = "Release"
-    buildType = "RelWithDebInfo"
+    buildType = "Release"
+    # Some lab has will set CMAKE_CXX_FLAGS_RELEASE
+    # buildType = "RelWithDebInfo"
     callWrapper("cmake -B . -G Ninja -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_C_COMPILER=clang -DCMAKE_BUILD_TYPE=" + buildType + " " + cmakeFlags + " -S \"" + labAbsPath + "\"")
     callWrapper("cmake --build . --config " + buildType + " --parallel 8")
     # this will save score in result.json file
