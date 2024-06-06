@@ -19,6 +19,12 @@ import argparse
 # ([4.29,   'baseline',   [4.29, 4.29, 4.29, 4.29, 4.3, 4.3, 4.3, 4.3, 4.3, 4.33]],      ' + 1.0x' )
 # ([4.35,   'align loop', [4.35, 4.35, 4.35, 4.35, 4.35, 4.35, 4.35, 4.35, 4.35, 4.35]], ' + 0.99x')
 
+parser = argparse.ArgumentParser(description='perf test')
+parser.add_argument("-num", type=int, help="num to run", default=10)
+args = parser.parse_args()
+
+num_run = args.num
+
 FNULL = open(os.devnull, 'w')
 
 saveCwd = os.getcwd()
@@ -130,9 +136,9 @@ for submissionName, submissionDir in submissions:
     print("  validation - Failed")
     print("  validation - validate.exe " + goldenFileName + " " + outputFileName)
 
-  print ("Running 10 measurements loop ...")
+  print ("Running {} measurements loop ...".format(num_run))
     
-  for x in range(0, 10):
+  for x in range(0, num_run):
     os.remove(outputFileName);
     if sys.platform != 'win32':
       output = subprocess.check_output("time -p " + runCmd, shell=True)
