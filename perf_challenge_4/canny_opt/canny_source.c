@@ -476,6 +476,8 @@ void gaussian_smooth(unsigned char *image, int rows, int cols, float sigma,
    * Blur in the y - direction.
    ****************************************************************************/
    if(VERBOSE) printf("   Bluring the image in the Y-direction.\n");
+
+#if ORIGIN
    for(c=0;c<cols;c++){
       for(r=0;r<rows;r++){
          sum = 0.0;
@@ -489,6 +491,60 @@ void gaussian_smooth(unsigned char *image, int rows, int cols, float sigma,
          (*smoothedim)[r*cols+c] = (short int)(dot*BOOSTBLURFACTOR/sum + 0.5);
       }
    }
+#else 
+   // Top part of line, partial kernel
+   for (c = 0; c < cols; c++) {
+      for (r = 0; r < center; r++) {
+         sum = 0.0;
+         dot = 0.0;
+         for (rr = -r; rr <= center; rr++)
+         {
+            dot += tempim[(r + rr) * cols + c] * kernel[center + rr];
+            sum += kernel[center + rr];
+         }
+         (*smoothedim)[r * cols + c] = (short int)(dot * BOOSTBLURFACTOR / sum + 0.5);
+      }
+   }
+
+   // Middle part of computations with full kernel, don't need sum now
+   float* dot_array = (float *)calloc(cols, sizeof(float));
+
+   for (r = center; r < rows - center; r++) {
+      for (c = 0; c < cols; c++) {
+         dot_array[c] = 0.0;
+      }
+
+      for (rr = (-center); rr <= center; rr++) {
+         for (c = 0 ; c < cols ; c++) {
+            dot_array[c] += tempim[(r + rr) * cols + c] * kernel[center + rr];
+         }
+      }
+
+      for (c = 0; c < cols; c++) {
+         (*smoothedim)[r * cols + c] = (short int)(dot_array[c] * BOOSTBLURFACTOR + 0.5);
+      }
+   }
+
+   free(dot_array);
+
+   // Bottom part of line, partial kernel
+   for (c = 0; c < cols; c++)
+   {
+      for (r = rows - center; r < rows; r++)
+      {
+         sum = 0.0;
+         dot = 0.0;
+         for (rr = -center; rr <= rows - r - 1; rr++)
+         {
+            {
+               dot += tempim[(r + rr) * cols + c] * kernel[center + rr];
+               sum += kernel[center + rr];
+            }
+         }
+         (*smoothedim)[r * cols + c] = (short int)(dot * BOOSTBLURFACTOR / sum + 0.5);
+      }
+   }
+#endif
 
    free(tempim);
    free(kernel);

@@ -42,6 +42,10 @@ for submission in os.listdir(os.getcwd()):
 print ("Building ...")
 
 for submissionName, submissionDir in submissions:
+  # if not submissionName == "canny_opt":
+  #   print("skip others for now")
+  #   continue
+
   print ("Building " + submissionName + " ...")
 
   submissionBuildDir = os.path.join(submissionDir, "build")
@@ -95,6 +99,10 @@ scoretable = []
 baseline = float(0)
 
 for submissionName, submissionDir in submissions:
+  # if not submissionName == "canny_opt":
+  #   print("skip others for now")
+  #   continue
+
   print ("Running " + submissionName + " ...")
 
   submissionBuildDir = os.path.join(submissionDir, "build")
