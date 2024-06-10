@@ -10,5 +10,6 @@ https://www.youtube.com/watch?v=xvnFfl9LctM
 https://easyperf.net/blog/2021/03/27/Summary-of-contest-4-part1
 
 Solution:
-* base line : ~ 3.1 - 2.3 s
-* loop interchange: 23-25% perf boost, ~ 2.5s
+* base line : ~ 3.1 - 3.3 s
+* loop interchange in `gaussian_smooth`:  ~ 2.5s
+* loop interchange in `derrivative_x_y`:  ~ 2.25 - 2.3 s
