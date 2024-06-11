@@ -56,6 +56,8 @@
 #include <stdlib.h>
 #define _USE_MATH_DEFINES
 #include <math.h>
+#include <immintrin.h>
+#include <xmmintrin.h>
 
 #define VERBOSE 0
 #define BOOSTBLURFACTOR 90.0
@@ -347,6 +349,7 @@ void magnitude_x_y(short int *delta_x, short int *delta_y, int rows, int cols,
       exit(1);
    }
 
+#if ORIGIN
    for(r=0,pos=0;r<rows;r++){
       for(c=0;c<cols;c++,pos++){
          sq1 = (int)delta_x[pos] * (int)delta_x[pos];
@@ -354,7 +357,57 @@ void magnitude_x_y(short int *delta_x, short int *delta_y, int rows, int cols,
          (*magnitude)[pos] = (short)(0.5 + sqrt((float)sq1 + (float)sq2));
       }
    }
+#else 
+   int total_pixels = rows * cols;
+   int simd_width = 8; // SSE can process 8 shorts (16-bit integers) at a time.
 
+   for (int i = 0; i <= total_pixels - simd_width; i += simd_width) {
+      // Load 8 short integers from delta_x and delta_y
+      __m128i dx_val = _mm_loadu_si128((__m128i*) & delta_x[i]);
+      __m128i dy_val = _mm_loadu_si128((__m128i*) & delta_y[i]);
+
+      // Convert 16-bit integers to 32-bit integers with sign extension
+      __m128i dx_lo = _mm_srai_epi32(_mm_unpacklo_epi16(dx_val, dx_val), 16);
+      __m128i dx_hi = _mm_srai_epi32(_mm_unpackhi_epi16(dx_val, dx_val), 16);
+      __m128i dy_lo = _mm_srai_epi32(_mm_unpacklo_epi16(dy_val, dy_val), 16);
+      __m128i dy_hi = _mm_srai_epi32(_mm_unpackhi_epi16(dy_val, dy_val), 16);
+
+      // Squaring the values
+      __m128i dx_lo_sq = _mm_mullo_epi32(dx_lo, dx_lo);
+      __m128i dx_hi_sq = _mm_mullo_epi32(dx_hi, dx_hi);
+      __m128i dy_lo_sq = _mm_mullo_epi32(dy_lo, dy_lo);
+      __m128i dy_hi_sq = _mm_mullo_epi32(dy_hi, dy_hi);
+
+      // Summing squared values
+      __m128i sum_lo = _mm_add_epi32(dx_lo_sq, dy_lo_sq);
+      __m128i sum_hi = _mm_add_epi32(dx_hi_sq, dy_hi_sq);
+
+      // Convert to float for square root calculation
+      __m128 sum_lo_ps = _mm_cvtepi32_ps(sum_lo);
+      __m128 sum_hi_ps = _mm_cvtepi32_ps(sum_hi);
+
+      // Calculate square root
+      __m128 mag_lo_ps = _mm_sqrt_ps(sum_lo_ps);
+      __m128 mag_hi_ps = _mm_sqrt_ps(sum_hi_ps);
+
+      // Convert back to integers
+      __m128i mag_lo = _mm_cvtps_epi32(mag_lo_ps);
+      __m128i mag_hi = _mm_cvtps_epi32(mag_hi_ps);
+
+      // Pack back into 16-bit integers
+      __m128i magnitude_val = _mm_packs_epi32(mag_lo, mag_hi);
+
+      // Store the result
+      _mm_storeu_si128((__m128i*) & (*magnitude)[i], magnitude_val);
+   }
+
+   // Process remaining pixels
+   for (int i = (total_pixels / simd_width) * simd_width; i < total_pixels; ++i) {
+      int sq1 = (int)delta_x[i] * (int)delta_x[i];
+      int sq2 = (int)delta_y[i] * (int)delta_y[i];
+      (*magnitude)[i] = (short)(0.5 + sqrt((float)sq1 + (float)sq2));
+   }
+#endif
 }
 
 /*******************************************************************************

@@ -13,3 +13,4 @@ Solution:
 * base line : ~ 3.1 - 3.3 s
 * loop interchange in `gaussian_smooth`:  ~ 2.5s
 * loop interchange in `derrivative_x_y`:  ~ 2.25 - 2.3 s
+* simd in `magnitude_x_y`:  ~ 2.1 - 2.15 s
