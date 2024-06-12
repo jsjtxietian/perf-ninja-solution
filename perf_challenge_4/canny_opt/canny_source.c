@@ -527,6 +527,7 @@ void gaussian_smooth(unsigned char *image, int rows, int cols, float sigma,
    * Blur in the x - direction.
    ****************************************************************************/
    if(VERBOSE) printf("   Bluring the image in the X-direction.\n");
+#if ORIGIN
    for(r=0;r<rows;r++){
       for(c=0;c<cols;c++){
          dot = 0.0;
@@ -540,7 +541,49 @@ void gaussian_smooth(unsigned char *image, int rows, int cols, float sigma,
          tempim[r*cols+c] = dot/sum;
       }
    }
+#else
+   for (r = 0; r < rows; r++)
+   {
+      // left
+      for (c = 0; c < center; c++)
+      {
+         dot = 0.0;
+         sum = 0.0;
+         for (cc = -c; cc <= center; cc++)
+         {
+            dot += (float)image[r * cols + (c + cc)] * kernel[center + cc];
+            sum += kernel[center + cc];
+         }
+         tempim[r * cols + c] = dot / sum;
+      }
 
+      // middle
+      for (c = center; c < cols - center; c++)
+      {
+         dot = 0.0;
+         sum = 0.0;
+         for (cc = (-center); cc <= center; cc++)
+         {
+            dot += (float)image[r * cols + (c + cc)] * kernel[center + cc];
+            sum += kernel[center + cc];
+         }
+         tempim[r * cols + c] = dot / sum;
+      }
+
+      // right
+      for (c = cols - center; c < cols; c++)
+      {
+         dot = 0.0;
+         sum = 0.0;
+         for (cc = (-center); cc <= cols - c - 1; cc++)
+         {
+            dot += (float)image[r * cols + (c + cc)] * kernel[center + cc];
+            sum += kernel[center + cc];
+         }
+         tempim[r * cols + c] = dot / sum;
+      }
+   }
+#endif
    /****************************************************************************
    * Blur in the y - direction.
    ****************************************************************************/
