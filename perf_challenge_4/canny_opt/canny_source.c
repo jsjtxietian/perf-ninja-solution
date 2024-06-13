@@ -1039,7 +1039,7 @@ void non_max_supp(short *mag, short *gradx, short *grady, int nrows, int ncols,
             } 
 
             /* Now determine if the current point is a maximum point */
-
+#if ORIGIN
             if ((mag1 > 0.0) || (mag2 > 0.0))
             {
                 *resultptr = (unsigned char) NOEDGE;
@@ -1051,6 +1051,14 @@ void non_max_supp(short *mag, short *gradx, short *grady, int nrows, int ncols,
                 else
                     *resultptr = (unsigned char) POSSIBLE_EDGE;
             }
+#else
+            *resultptr = ((mag1 <= 0.0) & (mag2 < 0.0)) ? POSSIBLE_EDGE : NOEDGE;
+            // if (__builtin_unpredictable(mag1 <= 0.0 & (mag2 < 0.0))) {
+            //    *resultptr = (unsigned char) POSSIBLE_EDGE;
+            // } else {
+            //    *resultptr = (unsigned char) NOEDGE;
+            // }
+#endif
         } 
     }
 }
