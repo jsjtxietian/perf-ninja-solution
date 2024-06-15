@@ -54,6 +54,7 @@
 *******************************************************************************/
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #define _USE_MATH_DEFINES
 #include <math.h>
 #include <immintrin.h>
@@ -1040,20 +1041,34 @@ void non_max_supp(short *mag, short *gradx, short *grady, int nrows, int ncols,
 
             /* Now determine if the current point is a maximum point */
 #if ORIGIN
+            // 2.01s
             if ((mag1 > 0.0) || (mag2 > 0.0))
             {
-                *resultptr = (unsigned char) NOEDGE;
+               *resultptr = (unsigned char) NOEDGE;
             }
             else
             {    
-                if (mag2 == 0.0)
-                    *resultptr = (unsigned char) NOEDGE;
-                else
-                    *resultptr = (unsigned char) POSSIBLE_EDGE;
+               if (mag2 == 0.0)
+                  *resultptr = (unsigned char) NOEDGE;
+               else
+                  *resultptr = (unsigned char) POSSIBLE_EDGE;
             }
 #else
+            // cmovnz => 1.87s
             *resultptr = ((mag1 <= 0.0) & (mag2 < 0.0)) ? POSSIBLE_EDGE : NOEDGE;
+            
+            // jmp => 1.993s
+            // *resultptr = ((mag1 <= 0.0) && (mag2 < 0.0)) ? POSSIBLE_EDGE : NOEDGE;
+            
+            // jmp => 1.994s
             // if (__builtin_unpredictable(mag1 <= 0.0 & (mag2 < 0.0))) {
+            //    *resultptr = (unsigned char) POSSIBLE_EDGE;
+            // } else {
+            //    *resultptr = (unsigned char) NOEDGE;
+            // }
+
+            // more jmp => 2.03s
+            // if (mag1 <= 0.0 && (mag2 < 0.0)) {
             //    *resultptr = (unsigned char) POSSIBLE_EDGE;
             // } else {
             //    *resultptr = (unsigned char) NOEDGE;
