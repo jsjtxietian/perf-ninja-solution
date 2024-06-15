@@ -85,6 +85,8 @@ double angle_radians(double x, double y);
 void non_max_supp(short *mag, short *gradx, short *grady, int nrows, int ncols,
     unsigned char *result);
 
+
+
 int main(int argc, char *argv[])
 {
    char *infilename = NULL;  /* Name of the input image */
@@ -1351,3 +1353,51 @@ int write_ppm_image(char* outfilename, unsigned char* image_red,
    if(fp != stdout) fclose(fp);
    return(1);
 }
+
+
+// worse than origin
+typedef struct {
+   int A;
+   int B;
+   float X1;
+   float Y1;
+   float Z1;
+   float X2;
+   float Y2;
+   float Z2;
+} LookupTableEntry;
+
+// const LookupTableEntry lookupTable[8] = {
+//    {1, ncols + 1,          1, -1, 0, 0, -1, 1},      // gx >= 0, gy >= 0, gx >= gy
+//    {ncols, ncols + 1,      0, 1, -1, -1, 1, 0}, // gx >= 0, gy >= 0, gx < gy
+//    {1, - ncols + 1,        1, -1, 0, 0, 1, -1},     // gx >= 0, gy < 0, gx >= -gy
+//    {-ncols, - ncols + 1,   0, 1, -1, 1, -1, 0}, // gx >= 0, gy < 0, gx < -gy
+//    {-1, ncols - 1,         -1, 1, 0, 0, -1, 1},       // gx < 0, gy >= 0, -gx >= gy
+//    {ncols, ncols - 1,      0, -1, 1, -1, 1, 0}, // gx < 0, gy >= 0, -gx < gy
+//    {-1, - ncols - 1,       -1, 1, 0, 0, 1, -1},      // gx < 0, gy < 0, -gx >= -gy
+//    {- ncols, - ncols - 1,  0, -1, 1, 1, -1, 0}  // gx < 0, gy < 0, -gx < -gy
+// };
+
+// m00 = *magptr;
+// if(m00 == 0){
+//    *resultptr = (unsigned char) NOEDGE;
+//    continue;
+// }
+
+// // xperp = -(gx = *gxptr)/((float)m00);
+// // yperp = (gy = *gyptr)/((float)m00);
+// gx = *gxptr;
+// gy = *gyptr;
+
+// int index =  ((gx < 0) << 2) | ((gy < 0) << 1) | abs(gx) < abs(gy);
+// LookupTableEntry entry = lookupTable[index];
+
+// z1 = *(magptr - entry.A);
+// z2 = *(magptr - entry.B);
+// mag1 = - (entry.X1 * m00 + entry.Y1 * z1 + entry.Z1 * z2) * gx + (entry.X2 * m00 + entry.Y2 * z1 + entry.Z2 * z2) * gy;
+
+// z1 = *(magptr + entry.A);
+// z2 = *(magptr + entry.B);
+// mag2 = - (entry.X1 * m00 + entry.Y1 * z1 + entry.Z1 * z2) * gx + (entry.X2 * m00 + entry.Y2 * z1 + entry.Z2 * z2) * gy;
+
+// *resultptr = (m00 < 0) ^ ((mag1 <= 0) & (mag2 < 0)) ? POSSIBLE_EDGE : NOEDGE;
