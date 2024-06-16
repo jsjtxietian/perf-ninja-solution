@@ -352,15 +352,6 @@ void magnitude_x_y(short int *delta_x, short int *delta_y, int rows, int cols,
       exit(1);
    }
 
-#if ORIGIN
-   for(r=0,pos=0;r<rows;r++){
-      for(c=0;c<cols;c++,pos++){
-         sq1 = (int)delta_x[pos] * (int)delta_x[pos];
-         sq2 = (int)delta_y[pos] * (int)delta_y[pos];
-         (*magnitude)[pos] = (short)(0.5 + sqrt((float)sq1 + (float)sq2));
-      }
-   }
-#else 
    int total_pixels = rows * cols;
    int simd_width = 8; // SSE can process 8 shorts (16-bit integers) at a time.
 
@@ -410,7 +401,6 @@ void magnitude_x_y(short int *delta_x, short int *delta_y, int rows, int cols,
       int sq2 = (int)delta_y[i] * (int)delta_y[i];
       (*magnitude)[i] = (short)(0.5 + sqrt((float)sq1 + (float)sq2));
    }
-#endif
 }
 
 /*******************************************************************************
@@ -462,17 +452,6 @@ void derrivative_x_y(short int *smoothedim, int rows, int cols,
    * losing pixels.
    ****************************************************************************/
    if(VERBOSE) printf("   Computing the Y-direction derivative.\n");
-#if ORIGIN
-   for(c=0;c<cols;c++){
-      pos = c;
-      (*delta_y)[pos] = smoothedim[pos+cols] - smoothedim[pos];
-      pos += cols;
-      for(r=1;r<(rows-1);r++,pos+=cols){
-         (*delta_y)[pos] = smoothedim[pos+cols] - smoothedim[pos-cols];
-      }
-      (*delta_y)[pos] = smoothedim[pos] - smoothedim[pos-cols];
-   }
-#else
    for (c = 0; c < cols; c++)
    {
       (*delta_y)[c] = smoothedim[c + cols] - smoothedim[c];
@@ -486,7 +465,6 @@ void derrivative_x_y(short int *smoothedim, int rows, int cols,
          (*delta_y)[c + r * cols] = smoothedim[c + (r + 1) * cols] - smoothedim[c + (r - 1) * cols];
       }
    }
-#endif
 }
 
 /*******************************************************************************
@@ -530,21 +508,6 @@ void gaussian_smooth(unsigned char *image, int rows, int cols, float sigma,
    * Blur in the x - direction.
    ****************************************************************************/
    if(VERBOSE) printf("   Bluring the image in the X-direction.\n");
-#if ORIGIN
-   for(r=0;r<rows;r++){
-      for(c=0;c<cols;c++){
-         dot = 0.0;
-         sum = 0.0;
-         for(cc=(-center);cc<=center;cc++){
-            if(((c+cc) >= 0) && ((c+cc) < cols)){
-               dot += (float)image[r*cols+(c+cc)] * kernel[center+cc];
-               sum += kernel[center+cc];
-            }
-         }
-         tempim[r*cols+c] = dot/sum;
-      }
-   }
-#else
    for (r = 0; r < rows; r++)
    {
       // left
@@ -586,27 +549,11 @@ void gaussian_smooth(unsigned char *image, int rows, int cols, float sigma,
          tempim[r * cols + c] = dot / sum;
       }
    }
-#endif
    /****************************************************************************
    * Blur in the y - direction.
    ****************************************************************************/
    if(VERBOSE) printf("   Bluring the image in the Y-direction.\n");
 
-#if ORIGIN
-   for(c=0;c<cols;c++){
-      for(r=0;r<rows;r++){
-         sum = 0.0;
-         dot = 0.0;
-         for(rr=(-center);rr<=center;rr++){
-            if(((r+rr) >= 0) && ((r+rr) < rows)){
-               dot += tempim[(r+rr)*cols+c] * kernel[center+rr];
-               sum += kernel[center+rr];
-            }
-         }
-         (*smoothedim)[r*cols+c] = (short int)(dot*BOOSTBLURFACTOR/sum + 0.5);
-      }
-   }
-#else 
    // Top part of line, partial kernel
    for (c = 0; c < cols; c++) {
       for (r = 0; r < center; r++) {
@@ -659,7 +606,6 @@ void gaussian_smooth(unsigned char *image, int rows, int cols, float sigma,
          (*smoothedim)[r * cols + c] = (short int)(dot * BOOSTBLURFACTOR / sum + 0.5);
       }
    }
-#endif
 
    free(tempim);
    free(kernel);
@@ -766,12 +712,7 @@ void apply_hysteresis(short int *mag, unsigned char *nms, int rows, int cols,
    ****************************************************************************/
    for(r=0,pos=0;r<rows;r++){
       for(c=0;c<cols;c++,pos++){
-#if ORIGIN
-	 if(nms[pos] == POSSIBLE_EDGE) edge[pos] = POSSIBLE_EDGE;
-	 else edge[pos] = NOEDGE;
-#else
    edge[pos] = nms[pos] == POSSIBLE_EDGE ? POSSIBLE_EDGE : NOEDGE;
-#endif
       }
    }
 
@@ -792,11 +733,7 @@ void apply_hysteresis(short int *mag, unsigned char *nms, int rows, int cols,
    for(r=0;r<32768;r++) hist[r] = 0;
    for(r=0,pos=0;r<rows;r++){
       for(c=0;c<cols;c++,pos++){
-#if ORIGIN
-	 if(edge[pos] == POSSIBLE_EDGE) hist[mag[pos]]++;
-#else
 	 hist[mag[pos]] += edge[pos] == POSSIBLE_EDGE;
-#endif
       }
    }
 
@@ -1054,21 +991,8 @@ void non_max_supp(short *mag, short *gradx, short *grady, int nrows, int ncols,
             } 
 
             /* Now determine if the current point is a maximum point */
-#if ORIGIN
-            // 2.01s
-            if ((mag1 > 0.0) || (mag2 > 0.0))
-            {
-               *resultptr = (unsigned char) NOEDGE;
-            }
-            else
-            {    
-               if (mag2 == 0.0)
-                  *resultptr = (unsigned char) NOEDGE;
-               else
-                  *resultptr = (unsigned char) POSSIBLE_EDGE;
-            }
-#else
-            // cmovnz => 1.87s
+
+            // cmovnz => overall 1.87s
             *resultptr = ((mag1 <= 0.0) & (mag2 < 0.0)) ? POSSIBLE_EDGE : NOEDGE;
             
             // jmp => 1.993s
@@ -1087,7 +1011,19 @@ void non_max_supp(short *mag, short *gradx, short *grady, int nrows, int ncols,
             // } else {
             //    *resultptr = (unsigned char) NOEDGE;
             // }
-#endif
+
+            // 2.01s
+            // if ((mag1 > 0.0) || (mag2 > 0.0))
+            // {
+            //    *resultptr = (unsigned char) NOEDGE;
+            // }
+            // else
+            // {    
+            //    if (mag2 == 0.0)
+            //       *resultptr = (unsigned char) NOEDGE;
+            //    else
+            //       *resultptr = (unsigned char) POSSIBLE_EDGE;
+            // }
         } 
     }
 }
