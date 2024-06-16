@@ -769,8 +769,12 @@ void apply_hysteresis(short int *mag, unsigned char *nms, int rows, int cols,
    ****************************************************************************/
    for(r=0,pos=0;r<rows;r++){
       for(c=0;c<cols;c++,pos++){
+#if ORIGIN
 	 if(nms[pos] == POSSIBLE_EDGE) edge[pos] = POSSIBLE_EDGE;
 	 else edge[pos] = NOEDGE;
+#else
+   edge[pos] = nms[pos] == POSSIBLE_EDGE ? POSSIBLE_EDGE : NOEDGE;
+#endif
       }
    }
 
@@ -791,7 +795,11 @@ void apply_hysteresis(short int *mag, unsigned char *nms, int rows, int cols,
    for(r=0;r<32768;r++) hist[r] = 0;
    for(r=0,pos=0;r<rows;r++){
       for(c=0;c<cols;c++,pos++){
+#if ORIGIN
 	 if(edge[pos] == POSSIBLE_EDGE) hist[mag[pos]]++;
+#else
+	 hist[mag[pos]] += edge[pos] == POSSIBLE_EDGE;
+#endif
       }
    }
 

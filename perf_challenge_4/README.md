@@ -15,4 +15,5 @@ Solution:
 * loop interchange in `derrivative_x_y`:  ~ 2.25 - 2.3 s
 * simd in `magnitude_x_y`:  ~ 2.1 - 2.15 s
 * remove condition in x blur in `gaussian_smooth`:  ~ 2.01 - 2.02s
-* remove the last condtion of store in `non_max_supp`: 1.83 ~ 1.84s (:? seems better than `__builtin_unpredictable`, need to check the assembly)
+* remove the last conditonal store in `non_max_supp`: 1.83 ~ 1.84s (replace 3 nested if with look up won't speed up)
+* remove conditonal store in `apply_hysteresis`: 1.67s
