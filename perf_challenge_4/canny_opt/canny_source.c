@@ -724,23 +724,20 @@ void make_gaussian_kernel(float sigma, float **kernel, int *windowsize)
 * NAME: Mike Heath
 * DATE: 2/15/96
 *******************************************************************************/
-void follow_edges(unsigned char *edgemapptr, short *edgemagptr, short lowval,
-   int cols)
+
+void follow_edges(unsigned char *edgemapptr, int cols)
 {
-   short *tempmagptr;
    unsigned char *tempmapptr;
    int i;
-   float thethresh;
-   int x[8] = {1,1,0,-1,-1,-1,0,1},
-       y[8] = {0,1,1,1,0,-1,-1,-1};
+
+   static int x[8] = {1,1,0,-1,-1,-1,0,1};
+   static int y[8] = {0,1,1,1,0,-1,-1,-1};
 
    for(i=0;i<8;i++){
       tempmapptr = edgemapptr - y[i]*cols + x[i];
-      tempmagptr = edgemagptr - y[i]*cols + x[i];
-
-      if((*tempmapptr == POSSIBLE_EDGE) && (*tempmagptr > lowval)){
+      if(*tempmapptr == POSSIBLE_EDGE) {
          *tempmapptr = (unsigned char) EDGE;
-         follow_edges(tempmapptr,tempmagptr, lowval, cols);
+         follow_edges(tempmapptr, cols);
       }
    }
 }
@@ -843,11 +840,18 @@ void apply_hysteresis(short int *mag, unsigned char *nms, int rows, int cols,
    * This loop looks for pixels above the highthreshold to locate edges and
    * then calls follow_edges to continue the edge.
    ****************************************************************************/
+
+   for(r=0,pos=0;r<rows;r++){
+    for(c=0;c<cols;c++,pos++){
+      edge[pos] = mag[pos] <= lowthreshold ? NOEDGE : edge[pos];
+    }
+  }
+
    for(r=0,pos=0;r<rows;r++){
       for(c=0;c<cols;c++,pos++){
-	 if((edge[pos] == POSSIBLE_EDGE) && (mag[pos] >= highthreshold)){
+	 if((edge[pos] == POSSIBLE_EDGE) & (mag[pos] >= highthreshold)){
             edge[pos] = EDGE;
-            follow_edges((edge+pos), (mag+pos), lowthreshold, cols);
+            follow_edges(edge+pos,cols);
 	 }
       }
    }
