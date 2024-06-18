@@ -531,9 +531,8 @@ void gaussian_smooth(unsigned char *image, int rows, int cols, float sigma,
          for (cc = (-center); cc <= center; cc++)
          {
             dot += (float)image[r * cols + (c + cc)] * kernel[center + cc];
-            sum += kernel[center + cc];
          }
-         tempim[r * cols + c] = dot / sum;
+         tempim[r * cols + c] = dot;
       }
 
       // right
