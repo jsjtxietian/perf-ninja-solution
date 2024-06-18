@@ -19,3 +19,8 @@ Solution:
 * remove conditonal store in `apply_hysteresis`: 1.67-1.68s
 * reduce bad speculation & remove necessary parameters in `follow_edges`: 1.64s (inline follow_edge in itself once won't speed up)
 * reduce uncessary calculation in `gaussian_smooth`: 1.60-1.62s
+* loop wulti-version in `gaussian_smooth`: 1.58-1.59s
+
+TODO:
+* check https://github.com/dendibakh/perf_challenge4/commits/master/Andrey_Evstyukhin
+* merge functions, more intrinsics, software prefetch

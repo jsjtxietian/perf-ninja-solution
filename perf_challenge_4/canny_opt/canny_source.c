@@ -508,44 +508,90 @@ void gaussian_smooth(unsigned char *image, int rows, int cols, float sigma,
    * Blur in the x - direction.
    ****************************************************************************/
    if(VERBOSE) printf("   Bluring the image in the X-direction.\n");
-   for (r = 0; r < rows; r++)
+
+   if (center == 2)
    {
-      // left
-      for (c = 0; c < center; c++)
+      for (r = 0; r < rows; r++)
       {
-         dot = 0.0;
-         sum = 0.0;
-         for (cc = -c; cc <= center; cc++)
+         // left
+         for (c = 0; c < 2; c++)
          {
-            dot += (float)image[r * cols + (c + cc)] * kernel[center + cc];
-            sum += kernel[center + cc];
+            dot = 0.0;
+            sum = 0.0;
+            for (cc = -c; cc <= 2; cc++)
+            {
+               dot += (float)image[r * cols + (c + cc)] * kernel[2 + cc];
+               sum += kernel[2 + cc];
+            }
+            tempim[r * cols + c] = dot / sum;
          }
-         tempim[r * cols + c] = dot / sum;
-      }
 
-      // middle
-      for (c = center; c < cols - center; c++)
-      {
-         dot = 0.0;
-         sum = 0.0;
-         for (cc = (-center); cc <= center; cc++)
+         // middle
+         for (c = 2; c < cols - 2; c++)
          {
-            dot += (float)image[r * cols + (c + cc)] * kernel[center + cc];
+            dot = 0.0;
+            for (cc = (-2); cc <= 2; cc++)
+            {
+               dot += (float)image[r * cols + (c + cc)] * kernel[2 + cc];
+            }
+            tempim[r * cols + c] = dot;
          }
-         tempim[r * cols + c] = dot;
-      }
 
-      // right
-      for (c = cols - center; c < cols; c++)
-      {
-         dot = 0.0;
-         sum = 0.0;
-         for (cc = (-center); cc <= cols - c - 1; cc++)
+         // right
+         for (c = cols - 2; c < cols; c++)
          {
-            dot += (float)image[r * cols + (c + cc)] * kernel[center + cc];
-            sum += kernel[center + cc];
+            dot = 0.0;
+            sum = 0.0;
+            for (cc = (-2); cc <= cols - c - 1; cc++)
+            {
+               dot += (float)image[r * cols + (c + cc)] * kernel[2 + cc];
+               sum += kernel[2 + cc];
+            }
+            tempim[r * cols + c] = dot / sum;
          }
-         tempim[r * cols + c] = dot / sum;
+      }
+   }
+   else
+   {
+      for (r = 0; r < rows; r++)
+      {
+         // left
+         for (c = 0; c < center; c++)
+         {
+            dot = 0.0;
+            sum = 0.0;
+            for (cc = -c; cc <= center; cc++)
+            {
+               dot += (float)image[r * cols + (c + cc)] * kernel[center + cc];
+               sum += kernel[center + cc];
+            }
+            tempim[r * cols + c] = dot / sum;
+         }
+
+         // middle
+         
+         for (c = center; c < cols - center; c++)
+         {
+            dot = 0.0;
+            for (cc = (-center); cc <= center; cc++)
+            {
+               dot += (float)image[r * cols + (c + cc)] * kernel[center + cc];
+            }
+            tempim[r * cols + c] = dot;
+         }
+
+         // right
+         for (c = cols - center; c < cols; c++)
+         {
+            dot = 0.0;
+            sum = 0.0;
+            for (cc = (-center); cc <= cols - c - 1; cc++)
+            {
+               dot += (float)image[r * cols + (c + cc)] * kernel[center + cc];
+               sum += kernel[center + cc];
+            }
+            tempim[r * cols + c] = dot / sum;
+         }
       }
    }
    /****************************************************************************
