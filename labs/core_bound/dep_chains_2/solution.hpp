@@ -52,50 +52,25 @@ constexpr float DEGREE_TO_RADIAN = (2 * PI_D) / UINT32_MAX;
 // Simulate the motion of the particles.
 // For every particle, we generate a random angle and move the particle
 // in the corresponding direction.
-#if SOLUTION
 
-// todo: no opt here, need investigation; constexpr can help a lot but it's not the goal of this lab
-template <class RNG, uint32_t M>
+template <class RNG>
 void randomParticleMotion(std::vector<Particle> &particles, uint32_t seed) {
-  RNG rng(seed);
-  int particle_size = particles.size();
-  int inner_loop_count = particle_size / M;
-
+#if SOLUTION
+  RNG rng1(seed);
+  RNG rng2(seed);
   for (int i = 0; i < STEPS; i++) {
-    for (int j = 0; j < inner_loop_count; j++) {
-      uint32_t vals[M];
-      for (int k = 0; k < M; k++) {
-        vals[k] = rng.gen();
-      }
-      const int base = j * M;
-
-      for (int k = 0; k < M; k++) {
-        float angle_rad = vals[k] * DEGREE_TO_RADIAN;
-        auto &p = particles[base + k];
-        p.x += cosine(angle_rad) * p.velocity;
-        p.y += sine(angle_rad) * p.velocity;
-      }
-    }
-
-    for (int j = inner_loop_count * M; j < particle_size; j++) {
-      uint32_t angle = rng.gen();
-      auto &p = particles[j];
-      float angle_rad = angle * DEGREE_TO_RADIAN;
-      p.x += cosine(angle_rad) * p.velocity;
-      p.y += sine(angle_rad) * p.velocity;
+    for (int j = 0; j + 1 < particles.size(); j += 2) {
+      uint32_t angle1 = rng1.gen();
+      float angle_rad1 = angle1 * DEGREE_TO_RADIAN;
+      particles[j].x += cosine(angle_rad1) * particles[j].velocity;
+      particles[j].y += sine(angle_rad1)   * particles[j].velocity;
+      uint32_t angle2 = rng2.gen();
+      float angle_rad2 = angle2 * DEGREE_TO_RADIAN;
+      particles[j+1].x += cosine(angle_rad2) * particles[j+1].velocity;
+      particles[j+1].y += sine(angle_rad2)   * particles[j+1].velocity;
     }
   }
-}
-
-template <class RNG>
-void randomParticleMotion(std::vector<Particle> &particles, uint32_t seed) {
-  randomParticleMotion<RNG, 8>(particles, seed);
-}
-
 #else
-
-template <class RNG>
-void randomParticleMotion(std::vector<Particle> &particles, uint32_t seed) {
   RNG rng(seed);
   for (int i = 0; i < STEPS; i++)
     for (auto &p : particles) {
@@ -104,6 +79,6 @@ void randomParticleMotion(std::vector<Particle> &particles, uint32_t seed) {
       p.x += cosine(angle_rad) * p.velocity;
       p.y += sine(angle_rad) * p.velocity;
     }
+#endif
 }
 
-#endif
