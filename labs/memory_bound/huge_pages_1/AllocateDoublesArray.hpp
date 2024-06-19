@@ -149,30 +149,44 @@ inline bool setRequiredPrivileges() {
 
 #endif
 
+#if defined(ON_WINDOWS) && defined(SOLUTION)
+inline auto allocateDoublesArray(size_t size) {
+  static const bool privileges_set = setRequiredPrivileges();
+  if (!privileges_set)
+    throw std::bad_alloc{};
+
+  const SIZE_T page_size = GetLargePageMinimum();
+  const auto n_bytes_requested = size * sizeof(double);
+  const auto n_pages_requested =
+      n_bytes_requested / page_size + (n_bytes_requested % page_size != 0);
+  const auto alloc_size = n_pages_requested * page_size;
+
+  auto alloc =
+      VirtualAlloc(NULL, alloc_size, MEM_RESERVE | MEM_COMMIT | MEM_LARGE_PAGES,
+                   PAGE_READWRITE);
+  if (!alloc)
+    throw std::bad_alloc{};
+
+  auto deleter = [](double *ptr) { VirtualFree(ptr, 0, MEM_RELEASE); };
+  return std::unique_ptr<double[], decltype(deleter)>(
+      static_cast<double *>(alloc), deleter);
+}
+
+#else
 // Allocate an array of doubles of size `size`, return it as a
 // std::unique_ptr<double[], D>, where `D` is a custom deleter type
 inline auto allocateDoublesArray(size_t size) {
-#ifdef SOLUTION
-  setRequiredPrivileges();
-  SIZE_T largePageSize = GetLargePageMinimum();
-  //std::cout << largePageSize << std::endl;
-
-  double* alloc = (double*)VirtualAlloc(NULL, largePageSize * ((size * sizeof(double) / largePageSize) + 1), MEM_RESERVE | MEM_COMMIT | MEM_LARGE_PAGES, PAGE_READWRITE);
-  auto deleter = [](double* ptr) { VirtualFree((void*)ptr, 0, MEM_RELEASE); };
-#else
+  // Allocate memory
   double *alloc = new double[size];
+  // remember to cast the pointer to double* if your allocator returns void*
   // Deleters can be conveniently defined as lambdas, but you can explicitly
   // define a class if you're not comfortable with the syntax
-  auto deleter = [/* state = ... */](double* ptr) { delete[] ptr; };
-#endif
-
-  
-
+  auto deleter = [/* state = ... */](double *ptr) { delete[] ptr; };
   return std::unique_ptr<double[], decltype(deleter)>(alloc,
                                                       std::move(deleter));
-
   // The above is equivalent to:
   // return std::make_unique<double[]>(size);
   // The more verbose version is meant to demonstrate the use of a custom
   // (potentially stateful) deleter
 }
+#endif

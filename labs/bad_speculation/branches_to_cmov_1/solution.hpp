@@ -64,14 +64,12 @@ public:
 
                 // Implementing the Rules of Life:
 #if SOLUTION
-                int currentCell = current[i][j];
-                int newState;
-                if (__builtin_unpredictable(aliveNeighbours == 3 || (aliveNeighbours == 2 && currentCell))) {
-                    newState = 1;
-                } else {
-                    newState = 0;
-                }
-                future[i][j] = newState;
+                int cell = current[i][j];
+                if (__builtin_unpredictable(aliveNeighbours != 2))
+                    cell = 0;
+                if (__builtin_unpredictable(aliveNeighbours == 3))
+                    cell = 1;
+                future[i][j] = cell;
 #else
                 switch(aliveNeighbours) {
                     // 1. Cell is lonely and dies

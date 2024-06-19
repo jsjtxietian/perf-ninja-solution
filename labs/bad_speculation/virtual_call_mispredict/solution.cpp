@@ -8,35 +8,23 @@ void generateObjects(InstanceArray& array) {
     std::default_random_engine generator(0);
     std::uniform_int_distribution<std::uint32_t> distribution(0, 2);
 
-    int count0 = 0,count1 = 0,count2 = 0;
-
+    InstanceArray arrayA;
+    InstanceArray arrayB;
+    InstanceArray arrayC;
     for (std::size_t i = 0; i < N; i++) {
         int value = distribution(generator);
         if (value == 0) {
-            count0++;
+            arrayA.push_back(std::make_unique<ClassA>());
         } else if (value == 1) {
-            count1++;
+            arrayB.push_back(std::make_unique<ClassB>());
         } else {
-            count2++;
+            arrayC.push_back(std::make_unique<ClassC>());
         }
     }
 
-    while (count0 != 0)
-    {
-        array.push_back(std::make_unique<ClassA>());
-        count0--;
-    }
-    while (count1 != 0)
-    {
-        array.push_back(std::make_unique<ClassB>());
-        count1--;
-    }
-     while (count2 != 0)
-    {
-        array.push_back(std::make_unique<ClassC>());
-        count2--;
-    }
-    
+    array.insert( array.end(), std::make_move_iterator(arrayA.begin()), std::make_move_iterator(arrayA.end()) );
+    array.insert( array.end(), std::make_move_iterator(arrayB.begin()), std::make_move_iterator(arrayB.end()) );
+    array.insert( array.end(), std::make_move_iterator(arrayC.begin()), std::make_move_iterator(arrayC.end()) );
 }
 
 #else
