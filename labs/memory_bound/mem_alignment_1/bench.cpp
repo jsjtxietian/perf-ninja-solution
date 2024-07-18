@@ -37,32 +37,32 @@ BENCHMARK_CAPTURE(bench1, _63,  63)->Unit(benchmark::kMicrosecond);
 BENCHMARK_CAPTURE(bench1, _64,  64)->Unit(benchmark::kMicrosecond);
 #endif
 BENCHMARK_CAPTURE(bench1, _65,  65)->Unit(benchmark::kMicrosecond);
-//BENCHMARK_CAPTURE(bench1, _71,  71)->Unit(benchmark::kMicrosecond);
-//BENCHMARK_CAPTURE(bench1, _72,  72)->Unit(benchmark::kMicrosecond);
-//BENCHMARK_CAPTURE(bench1, _73,  73)->Unit(benchmark::kMicrosecond);
-//BENCHMARK_CAPTURE(bench1, _79,  79)->Unit(benchmark::kMicrosecond);
-//BENCHMARK_CAPTURE(bench1, _80,  80)->Unit(benchmark::kMicrosecond);
-//BENCHMARK_CAPTURE(bench1, _81,  81)->Unit(benchmark::kMicrosecond);
-//BENCHMARK_CAPTURE(bench1, _127, 127)->Unit(benchmark::kMicrosecond);
+BENCHMARK_CAPTURE(bench1, _71,  71)->Unit(benchmark::kMicrosecond);
+BENCHMARK_CAPTURE(bench1, _72,  72)->Unit(benchmark::kMicrosecond);
+BENCHMARK_CAPTURE(bench1, _73,  73)->Unit(benchmark::kMicrosecond);
+BENCHMARK_CAPTURE(bench1, _79,  79)->Unit(benchmark::kMicrosecond);
+BENCHMARK_CAPTURE(bench1, _80,  80)->Unit(benchmark::kMicrosecond);
+BENCHMARK_CAPTURE(bench1, _81,  81)->Unit(benchmark::kMicrosecond);
+BENCHMARK_CAPTURE(bench1, _127, 127)->Unit(benchmark::kMicrosecond);
 #ifndef ON_MACOS
 BENCHMARK_CAPTURE(bench1, _128, 128)->Unit(benchmark::kMicrosecond);
 #endif
-//BENCHMARK_CAPTURE(bench1, _129, 129)->Unit(benchmark::kMicrosecond);
-//BENCHMARK_CAPTURE(bench1, _255, 255)->Unit(benchmark::kMicrosecond);
+BENCHMARK_CAPTURE(bench1, _129, 129)->Unit(benchmark::kMicrosecond);
+BENCHMARK_CAPTURE(bench1, _255, 255)->Unit(benchmark::kMicrosecond);
 #ifndef ON_MACOS
 BENCHMARK_CAPTURE(bench1, _256, 256)->Unit(benchmark::kMicrosecond);
 #endif
-//BENCHMARK_CAPTURE(bench1, _257, 257)->Unit(benchmark::kMicrosecond);
+BENCHMARK_CAPTURE(bench1, _257, 257)->Unit(benchmark::kMicrosecond);
 BENCHMARK_CAPTURE(bench1, _511, 511)->Unit(benchmark::kMicrosecond);
 #ifndef ON_MACOS
 BENCHMARK_CAPTURE(bench1, _512, 512)->Unit(benchmark::kMicrosecond);
 #endif
 BENCHMARK_CAPTURE(bench1, _513, 513)->Unit(benchmark::kMicrosecond);
-//BENCHMARK_CAPTURE(bench1, _1023, 1023)->Unit(benchmark::kMicrosecond);
+BENCHMARK_CAPTURE(bench1, _1023, 1023)->Unit(benchmark::kMicrosecond);
 #ifndef ON_MACOS
 BENCHMARK_CAPTURE(bench1, _1024, 1024)->Unit(benchmark::kMicrosecond);
 #endif
-//BENCHMARK_CAPTURE(bench1, _1025, 1025)->Unit(benchmark::kMicrosecond);
+BENCHMARK_CAPTURE(bench1, _1025, 1025)->Unit(benchmark::kMicrosecond);
 
 // Run the benchmark
 BENCHMARK_MAIN();
