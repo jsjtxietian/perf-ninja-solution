@@ -1,4 +1,4 @@
-quick start
+#### quick start
 * install python packages listed in checl_speedup.py
 * install gbench use scrip under tools folder
 * install clang and ninja
@@ -14,3 +14,7 @@ cmake --build . --target validateLab
 cmake --build . --target benchmarkLab
 // cmake --build . --config Release --target benchmarkLab
 ```
+
+#### gprof2dot
+vtune.exe --report=gprof-cc --result-dir=r001hs\ --format=text --report-output=sample_profile.txt
+python gprof2dot.py  -f axe -n0 -e0 -s sample_profile.txt | dot.exe  -Tsvg -o output.svg

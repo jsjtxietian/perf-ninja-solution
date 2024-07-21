@@ -2,6 +2,8 @@
 
 Canny image edge detector algorithm
 
+args: 221575.pgm 0.5 0.7 0.9
+
 Read the details here:
 https://easyperf.net/blog/2021/02/05/Performance-analysis-and-tuning-contest-4
 
