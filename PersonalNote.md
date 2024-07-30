@@ -16,5 +16,8 @@ cmake --build . --target benchmarkLab
 ```
 
 #### gprof2dot
+
+[Navigating the Complexity of Large Codebases Using Vtune + xdot (or perf + gprof2dot) - Performance Engineering (pramodkumbhar.com)](https://pramodkumbhar.com/2024/04/navigating-the-complexity-of-large-codebases-using-vtune-xdot-or-perf-gprof2dot/)
+
 vtune.exe --report=gprof-cc --result-dir=r001hs\ --format=text --report-output=sample_profile.txt
 python gprof2dot.py  -f axe -n0 -e0 -s sample_profile.txt | dot.exe  -Tsvg -o output.svg
