@@ -172,6 +172,29 @@ inline auto allocateDoublesArray(size_t size) {
       static_cast<double *>(alloc), deleter);
 }
 
+#elif defined(ON_LINUX) && defined(SOLUTION)
+
+// Allocate an array of doubles of size `size`, return it as a
+// std::unique_ptr<double[], D>, where `D` is a custom deleter type
+inline auto allocateDoublesArray(size_t size) {
+  size *= sizeof(double);
+
+  // Allocate full pages
+  constexpr size_t page_size = 1ul << 21; // 2MB
+  const auto pages_to_alloc = size / page_size + (size % page_size != 0);
+  size = pages_to_alloc * page_size;
+
+  const auto alloc = mmap(nullptr, size, PROT_READ | PROT_WRITE,
+                          MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
+  if (alloc == MAP_FAILED)
+    throw std::bad_alloc{};
+
+  auto deleter = [s = size](double *addr) { munmap(addr, s); };
+
+  return std::unique_ptr<double[], decltype(deleter)>(
+      static_cast<double *>(alloc), deleter);
+}
+
 #else
 // Allocate an array of doubles of size `size`, return it as a
 // std::unique_ptr<double[], D>, where `D` is a custom deleter type
