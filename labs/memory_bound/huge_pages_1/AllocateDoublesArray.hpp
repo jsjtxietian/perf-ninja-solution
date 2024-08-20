@@ -174,6 +174,8 @@ inline auto allocateDoublesArray(size_t size) {
 
 #elif defined(ON_LINUX) && defined(SOLUTION)
 
+// see https://github.com/microsoft/WSL/issues/3796 , can't test it right now
+
 // Allocate an array of doubles of size `size`, return it as a
 // std::unique_ptr<double[], D>, where `D` is a custom deleter type
 inline auto allocateDoublesArray(size_t size) {
