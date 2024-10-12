@@ -37,9 +37,6 @@ static void bench1(benchmark::State &state) {
                             sizeof(double));
 
     // Cleanup via RAII
-  } catch (const std::bad_alloc &) {
-    std::cerr << "std::bad_alloc was thrown\n";
-    throw;
   } catch (const std::exception &e) {
     std::cerr << "The following exception was thrown:\n" << e.what() << '\n';
     throw;

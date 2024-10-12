@@ -153,7 +153,7 @@ inline bool setRequiredPrivileges() {
 inline auto allocateDoublesArray(size_t size) {
   static const bool privileges_set = setRequiredPrivileges();
   if (!privileges_set)
-    throw std::bad_alloc{};
+    throw std::runtime_error{"setRequiredPrivileges failed"};
 
   const SIZE_T page_size = GetLargePageMinimum();
   const auto n_bytes_requested = size * sizeof(double);
@@ -164,8 +164,10 @@ inline auto allocateDoublesArray(size_t size) {
   auto alloc =
       VirtualAlloc(NULL, alloc_size, MEM_RESERVE | MEM_COMMIT | MEM_LARGE_PAGES,
                    PAGE_READWRITE);
-  if (!alloc)
-    throw std::bad_alloc{};
+  if (!alloc) {
+    // error 1450: "Insufficient system resources exist to complete the requested service"
+    throw std::runtime_error{"VirtualAlloc failed, try reduce bench data size"};
+  }
 
   auto deleter = [](double *ptr) { VirtualFree(ptr, 0, MEM_RELEASE); };
   return std::unique_ptr<double[], decltype(deleter)>(
