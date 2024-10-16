@@ -4,6 +4,21 @@
 #include <random>
 
 void originalGenerateObjects(InstanceArray& array) {
+#if SOLUTION
+    std::default_random_engine generator(0);
+    std::uniform_int_distribution<std::uint32_t> distribution(0, 2);
+
+    for (std::size_t i = 0; i < N; i++) {
+        int value = distribution(generator);
+        if (value == 0) {
+            array.push_back(ClassD(0));
+        } else if (value == 1) {
+            array.push_back(ClassD(1));
+        } else {
+            array.push_back(ClassD(2));
+        }
+    }
+#else
     std::default_random_engine generator(0);
     std::uniform_int_distribution<std::uint32_t> distribution(0, 2);
 
@@ -17,11 +32,16 @@ void originalGenerateObjects(InstanceArray& array) {
             array.push_back(std::make_unique<ClassC>());
         }
     }
+#endif
 }
 
 void originalInvoke(InstanceArray& array, std::size_t& data) {
     for (const auto& item: array) {
+#ifdef SOLUTION
+        item.handle(data);
+#else
         item->handle(data);
+#endif
     }
 }
 
