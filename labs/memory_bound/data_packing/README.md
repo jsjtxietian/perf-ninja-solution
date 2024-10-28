@@ -1,6 +1,7 @@
 # Data packing
 
 ### NOTE: after migrating from clang12 to clang14 the speedup is no longer measurable.
+See https://github.com/dendibakh/perf-ninja/issues/100
 
 This is a lab about data packing.
 
