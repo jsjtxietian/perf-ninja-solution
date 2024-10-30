@@ -11,6 +11,65 @@
 // Compute the histogram of image pixels
 std::array<uint32_t, 256> computeHistogram(const GrayscaleImage& image) {
 #if SOLUTION
+  // vbins[bin * simd_width + lane] = count
+  // inspired by https://gist.github.com/Nugine/31daa17af55c1973009e2783e73fd70e  
+  // slightly worse than the golden solution below
+  
+  // std::array<uint32_t, 256> hist;
+  // hist.fill(0);
+
+  // const int total_pixels = image.width * image.height;
+  // const uint8_t* data = image.data.get();
+
+  // // Initialize a large temporary histogram to reduce write conflicts
+  // alignas(64) uint32_t vbins[256 * 16];
+  // memset(vbins, 0, sizeof(vbins));
+
+  // const int simd_width = 16; // Processing 16 pixels at a time
+
+  // // Process pixels in chunks of 16
+  // int i = 0;
+  // for (; i <= total_pixels - simd_width; i += simd_width) {
+  //     // Load 16 pixels into a 128-bit SIMD register
+  //     __m128i x0 = _mm_loadu_si128((__m128i*)(data + i)); // Load 16 bytes
+
+  //     // Convert uint8_t to uint32_t (expanding to 16 elements)
+  //     __m512i x2 = _mm512_cvtepu8_epi32(x0);
+
+  //     // Create indices 0 to 15
+  //     const __m512i indices = _mm512_set_epi32(
+  //         15, 14, 13, 12, 11, 10, 9, 8,
+  //         7, 6, 5, 4, 3, 2, 1, 0);
+
+  //     // Compute x3 = (x2 << 4) + indices
+  //     // This ensures unique indices for each pixel to avoid write conflicts
+  //     __m512i x3 = _mm512_add_epi32(_mm512_slli_epi32(x2, 4), indices);
+
+  //     // Gather counts from vbins
+  //     __m512i y0 = _mm512_i32gather_epi32(x3, vbins, 4);
+
+  //     // Increment counts
+  //     __m512i y1 = _mm512_add_epi32(y0, _mm512_set1_epi32(1));
+
+  //     // Scatter updated counts back to vbins
+  //     _mm512_i32scatter_epi32(vbins, x3, y1, 4);
+  // }
+
+  // // Handle any remaining pixels
+  // for (; i < total_pixels; ++i) {
+  //     uint8_t pixel_value = data[i];
+  //     hist[pixel_value]++;
+  // }
+
+  // // Accumulate the counts from vbins into the final histogram
+  // for (int bin = 0; bin < 256; ++bin) {
+  //     // Sum the 16 counts for each bin
+  //     __m512i bin_counts = _mm512_loadu_si512(vbins + bin * 16);
+  //     uint32_t sum = _mm512_reduce_add_epi32(bin_counts);
+  //     hist[bin] += sum;
+  // }
+
+  // return hist;
   std::array<uint32_t, 256> hist1;
   std::array<uint32_t, 256> hist2;
   std::array<uint32_t, 256> hist3;
