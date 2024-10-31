@@ -1,3 +1,5 @@
+10% speed up
+
 **TODO**: add an introductory and a summary videos.
 
 This small program simulates the random particle movement. We have 1000 particles moving on a 2D surface without constraints. It means that there are no bounds, they can move as far from their initial coordinates as they want. Each particle has initial x and y coordinates in the range [-1000,1000] and a constant speed in the range [0;1]. The program simulates 1000 steps of particle movement.

@@ -1,3 +1,6 @@
+80% speed up
+98% if dod
+
 **TODO**: add an introductory and a summary videos.
 
 This lab assignment focuses on improving performance by reducing the number of branch target mispredictions. In this lab,

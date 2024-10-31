@@ -1,3 +1,5 @@
+75% speed up
+
 [<img src="../../../img/CompilerIntrinsics1-Intro.png">](https://www.youtube.com/watch?v=mlXw_qYRi78&list=PLRWO2AL1QAV6bJAU2kgB4xfodGID43Y5d&index=12)
 
 This is a lab about using [compiler intrinsics](https://en.wikipedia.org/wiki/Intrinsic_function) to speed up parts of the code, where compilers fail to generate optimal code.

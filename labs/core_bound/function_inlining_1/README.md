@@ -1,3 +1,5 @@
+47% speedup
+
 [<img src="../../../img/FunctionInlining1Intro.png">](https://www.youtube.com/watch?v=fp1_e3rjZQs&list=PLRWO2AL1QAV6bJAU2kgB4xfodGID43Y5d&index=12)
 
 This is a lab about [function inlining](https://en.wikipedia.org/wiki/Inline_expansion) to speed up sorting.

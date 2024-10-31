@@ -1,3 +1,5 @@
+56% speed up
+
 # Finite element operator evaluation
 
 ## Motivation and problem description

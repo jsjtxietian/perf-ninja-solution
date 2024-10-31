@@ -1,3 +1,6 @@
+cmove: 49% speed up
+branchless: 93% speed up
+
 **TODO**: add an introductory and a summary videos.
 
 This is the good old game of life. The program takes 10 randomly generated 1024x1024 grids (boards) and simulates the next 10 game of life rounds. It first simulates 10 rounds for the first board, then goes off to the second board, and so on.
