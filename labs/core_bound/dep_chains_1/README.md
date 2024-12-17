@@ -1,3 +1,4 @@
+75% speed up
 # Speed up data dependency chains #1.
 
 [<img src="../../../img/DepChains1.png">](https://www.youtube.com/watch?v=nXf6MxNlXdg&list=PLRWO2AL1QAV6bJAU2kgB4xfodGID43Y5d)

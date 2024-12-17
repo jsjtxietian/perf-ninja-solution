@@ -1,4 +1,4 @@
-10% speed up
+10% speed up local; quick bench 57% when O3
 
 **TODO**: add an introductory and a summary videos.
 
