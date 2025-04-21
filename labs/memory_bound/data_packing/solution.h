@@ -2,6 +2,7 @@
 #include <array>
 
 // Assume those constants never change
+// 1000000 gives better results, see https://github.com/dendibakh/perf-ninja/pull/125
 constexpr int N = 10000;
 // constexpr int N = 50000;
 constexpr int minRandom = 0;
